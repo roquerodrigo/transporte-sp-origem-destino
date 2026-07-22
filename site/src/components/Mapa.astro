@@ -21,10 +21,32 @@ const pmtiles = `${base}dados/demanda.pmtiles`;
 <script>
   import maplibregl from "maplibre-gl";
   import "maplibre-gl/dist/maplibre-gl.css";
-  import { Protocol } from "pmtiles";
+  import { PMTiles, Protocol } from "pmtiles";
 
   const protocol = new Protocol();
   maplibregl.addProtocol("pmtiles", protocol.tile);
+
+  /**
+   * Read the archive from memory instead of over HTTP range requests.
+   *
+   * The site is fronted by Cloudflare, which strips `Accept-Ranges` and compresses
+   * `application/octet-stream`, so the byte-range reads PMTiles normally uses come back
+   * corrupt. Fetching the whole 7 MB file once and serving its bytes from an ArrayBuffer
+   * sidesteps that entirely — one plain GET, no ranges — at the cost of a single upfront
+   * download, which for a 7 MB tileset is fine.
+   */
+  class BufferSource {
+    constructor(
+      private readonly buffer: ArrayBuffer,
+      private readonly key: string,
+    ) {}
+    getKey() {
+      return this.key;
+    }
+    async getBytes(offset: number, length: number) {
+      return { data: this.buffer.slice(offset, offset + length) };
+    }
+  }
 
   // Grouped sector colours — the 14 survey sectors folded into the categories a reader tracks.
   const SETOR_COR: [number, string][] = [
@@ -92,7 +114,11 @@ const pmtiles = `${base}dados/demanda.pmtiles`;
     }
   }
 
-  function draw(container: HTMLElement) {
+  async function draw(container: HTMLElement) {
+    const url = container.dataset.pmtiles!;
+    const buffer = await fetch(url).then((r) => r.arrayBuffer());
+    protocol.add(new PMTiles(new BufferSource(buffer, url) as any));
+
     const map = new maplibregl.Map({
       container,
       style: basemap(isDark()),
@@ -125,7 +151,7 @@ const pmtiles = `${base}dados/demanda.pmtiles`;
 
     let first = true;
     map.on("style.load", () => {
-      map.addSource("demanda", { type: "vector", url: `pmtiles://${container.dataset.pmtiles}` });
+      map.addSource("demanda", { type: "vector", url: `pmtiles://${url}` });
 
       type Expr = maplibregl.DataDrivenPropertyValueSpecification<number>;
       const raio = ["interpolate", ["linear"], ["zoom"], 8, 1, 13, 2.6, 16, 5] as Expr;
