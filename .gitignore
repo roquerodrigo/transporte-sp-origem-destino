@@ -9,6 +9,9 @@ data/raw/od_survey/**/_extracted/
 # committed under site/public, and the tiny summary is kept for the site's stat tiles.
 data/dist/*.geojson
 data/dist/*.parquet
+data/dist/*.csv
+data/dist/*.pmtiles
+data/dist/*.pmtiles-journal
 data/dist/enderecos.parquet
 
 node_modules/

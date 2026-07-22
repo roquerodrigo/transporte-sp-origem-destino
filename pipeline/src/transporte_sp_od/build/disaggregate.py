@@ -43,20 +43,35 @@ class Candidates:
         table = pq.read_table(settings.dist_dir / "enderecos.parquet")
         zones = table.column("zone").to_numpy()
         species = table.column("species").to_pylist()
-        xs = table.column("x").to_numpy()
-        ys = table.column("y").to_numpy()
+        self._x = table.column("x").to_numpy()
+        self._y = table.column("y").to_numpy()
         self._by: dict[tuple[int, str], list[int]] = defaultdict(list)
         for i, (zone, esp) in enumerate(zip(zones, species, strict=True)):
             self._by[(int(zone), esp)].append(i)
-        self._x, self._y = xs, ys
-        log.info("candidates: %d addresses in %d (zone, species) groups", len(xs), len(self._by))
+        # A pool of candidate row indices per (zone, species-set), built on first use. Flows
+        # sample the same few species-sets per zone hundreds of thousands of times, so the
+        # pool is cached rather than rebuilt each call.
+        self._pool_cache: dict[tuple[int, frozenset[str]], np.ndarray] = {}
+        log.info("candidates: %d addresses in %d (zone, species) groups", len(self._x),
+                 len(self._by))
+
+    def _pool(self, zone: int, species: set[str]) -> np.ndarray:
+        key = (zone, frozenset(species))
+        pool = self._pool_cache.get(key)
+        if pool is None:
+            pool = np.fromiter(
+                (i for esp in species for i in self._by.get((zone, esp), ())),
+                dtype=np.int64,
+            )
+            self._pool_cache[key] = pool
+        return pool
 
     def sample(self, zone: int, species: set[str], count: int, rng) -> list[tuple[float, float]]:
-        pool = [i for esp in species for i in self._by.get((zone, esp), ())]
-        if not pool or count <= 0:
+        pool = self._pool(zone, species)
+        if pool.size == 0 or count <= 0:
             return []
-        chosen = rng.choice(pool, size=count, replace=len(pool) < count)
-        return [(float(self._x[i]), float(self._y[i])) for i in chosen]
+        chosen = rng.choice(pool, size=count, replace=pool.size < count)
+        return list(zip(self._x[chosen].tolist(), self._y[chosen].tolist(), strict=True))
 
 
 def _zone_totals() -> tuple[
