@@ -28,7 +28,7 @@ agregação por zona. Só entram os registros **geolocalizados** (o resto não t
 cd pipeline
 uv run transporte-sp-od fetch      # baixa o survey (snapshot datado)
 uv run transporte-sp-od build      # demanda (coords reais) -> data/dist/ (geojson + resumo)
-uv run transporte-sp-od flows      # viagens reais O→D -> data/dist/fluxos.{csv,parquet} + pontos p/ mapa (geojson)
+uv run transporte-sp-od flows      # viagens reais O→D -> fluxos.{csv,parquet} + leves fluxos_{50k,20k}.* + pontos p/ mapa (geojson)
 uv run ruff check . && uv run pytest
 
 # vector tiles para os mapas (tippecanoe):
@@ -49,6 +49,7 @@ cp demanda.pmtiles fluxos.pmtiles resumo.json ../../site/public/dados/
 | Como a pesquisa é lida (campos, `people()`) | `sources/survey.py` |
 | A demanda (casa/trabalho/escola por coord real) | `build/demand.py` |
 | As viagens observadas O→D | `build/flows.py` (uma linha por registro geolocalizado) |
+| As versões leves (50k/20k) | `flows.subsample` (PPS ∝ peso + Horvitz-Thompson; preserva o total) |
 | Agrupamento de motivos no mapa de viagens | `export.DEST_CATEGORY` (casa/trabalho/educação/saúde/outros) |
 | O mapa de demanda (heatmap) | `site/src/components/Mapa.astro` |
 | O mapa de viagens (pontos) | `site/src/components/MapaFluxos.astro` |

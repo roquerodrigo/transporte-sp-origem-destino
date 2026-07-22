@@ -45,7 +45,7 @@ def _write(path, payload) -> None:
     log.info("wrote %s (%.1f KB)", path.name, path.stat().st_size / 1024)
 
 
-def write_flows(arcs: list[dict], summary: dict) -> None:
+def write_flows(arcs: list[dict], summary: dict, stem: str = "fluxos") -> None:
     """The observed OD trips, as Parquet and CSV.
 
     Each row is one trip: its real origin and destination in WGS84, the OD zones, the
@@ -80,10 +80,12 @@ def write_flows(arcs: list[dict], summary: dict) -> None:
             "d_lat": d_lat,
         }
     )
-    pq.write_table(table, settings.dist_dir / "fluxos.parquet", compression="zstd")
-    _write_csv(settings.dist_dir / "fluxos.csv", table)
+    pq.write_table(table, settings.dist_dir / f"{stem}.parquet", compression="zstd")
+    _write_csv(settings.dist_dir / f"{stem}.csv", table)
     log.info(
-        "wrote fluxos.parquet and fluxos.csv (%d trips, %d trips/day)",
+        "wrote %s.parquet and %s.csv (%d trips, %d trips/day)",
+        stem,
+        stem,
         len(arcs),
         summary["trips"],
     )
