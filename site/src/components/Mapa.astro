@@ -61,7 +61,7 @@ const pmtiles = `${base}dados/demanda.pmtiles`;
       `rgba(${r},${g},${b},0.7)`,
       1,
       `rgba(${dr},${dg},${db},0.9)`,
-    ] as maplibregl.DataDrivenPropertyValueSpecification<string>;
+    ] as unknown as maplibregl.ExpressionSpecification;
 
   const CAMADAS = {
     residencia: { rotulo: "Residências", cor: "#5b6bbf", rampa: rampa(91, 107, 191, 58, 73, 160) },
@@ -157,11 +157,11 @@ const pmtiles = `${base}dados/demanda.pmtiles`;
     map.on("style.load", () => {
       map.addSource("demanda", { type: "vector", url: `pmtiles://${url}` });
 
-      type Expr = maplibregl.DataDrivenPropertyValueSpecification<number>;
+      type Expr = maplibregl.ExpressionSpecification;
       // FE_PESS ranges into the low thousands; cap its pull so a few huge weights don't wash out.
-      const peso = ["interpolate", ["linear"], ["get", "weight"], 0, 0, 1500, 1] as Expr;
-      const intensidade = ["interpolate", ["linear"], ["zoom"], 5, 1, 11, 1.6, 15, 3] as Expr;
-      const raio = ["interpolate", ["linear"], ["zoom"], 5, 2, 9, 9, 13, 20, 15, 28] as Expr;
+      const peso = ["interpolate", ["linear"], ["get", "weight"], 0, 0, 1500, 1] as unknown as Expr;
+      const intensidade = ["interpolate", ["linear"], ["zoom"], 5, 1, 11, 1.6, 15, 3] as unknown as Expr;
+      const raio = ["interpolate", ["linear"], ["zoom"], 5, 2, 9, 9, 13, 20, 15, 28] as unknown as Expr;
 
       for (const [id, { rampa: cores }] of Object.entries(CAMADAS)) {
         map.addLayer({
