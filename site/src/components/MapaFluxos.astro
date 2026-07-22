@@ -1,0 +1,240 @@
+---
+/**
+ * The flow map: the trip endpoints as address-level point layers — where trips start (homes)
+ * and where they end, split by purpose (work, education, health, other). Points only; the
+ * arcs linking origin to destination are never drawn. Same PMTiles-in-memory, same
+ * theme-following chrome as the demand map.
+ */
+interface Props {
+  altura?: string;
+}
+const { altura = "78vh" } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const pmtiles = `${base}dados/fluxos.pmtiles`;
+---
+
+<div class="mapa" data-pmtiles={pmtiles} style={`height: ${altura}`}></div>
+<noscript><p>O mapa precisa de JavaScript. Os dados estão em <code>dados/fluxos.pmtiles</code>.</p></noscript>
+
+<script>
+  import maplibregl from "maplibre-gl";
+  import "maplibre-gl/dist/maplibre-gl.css";
+  import { PMTiles, Protocol } from "pmtiles";
+
+  const protocol = new Protocol();
+  maplibregl.addProtocol("pmtiles", protocol.tile);
+
+  /**
+   * Read the archive from memory instead of over HTTP range requests — Cloudflare strips
+   * `Accept-Ranges` and compresses `application/octet-stream`, so the byte-range reads PMTiles
+   * normally uses come back corrupt. One plain GET of the whole 4 MB file, served from an
+   * ArrayBuffer, sidesteps that.
+   */
+  class BufferSource {
+    constructor(
+      private readonly buffer: ArrayBuffer,
+      private readonly key: string,
+    ) {}
+    getKey() {
+      return this.key;
+    }
+    async getBytes(offset: number, length: number) {
+      return { data: this.buffer.slice(offset, offset + length) };
+    }
+  }
+
+  // Each toggle maps to a PMTiles source-layer: the origins, then destinations by purpose.
+  const CAMADAS = {
+    origens: { rotulo: "Origens", cor: "#5b6bbf" },
+    dest_trabalho: { rotulo: "Trabalho", cor: "#1e6fd6" },
+    dest_educacao: { rotulo: "Educação", cor: "#00897b" },
+    dest_saude: { rotulo: "Saúde", cor: "#2e7d32" },
+    dest_outros: { rotulo: "Outros", cor: "#e8590c" },
+  } as const;
+  const IDS = Object.keys(CAMADAS);
+
+  const basemap = (dark: boolean) => {
+    const variant = dark ? "dark_all" : "light_all";
+    return {
+      version: 8 as const,
+      sources: {
+        carto: {
+          type: "raster" as const,
+          tiles: ["a", "b"].map(
+            (h) => `https://${h}.basemaps.cartocdn.com/${variant}/{z}/{x}/{y}@2x.png`,
+          ),
+          tileSize: 256,
+          attribution:
+            '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> · ' +
+            '© <a href="https://carto.com/attributions">CARTO</a> · Pesquisa OD 2023 Metrô-SP · IBGE',
+        },
+      },
+      layers: [{ id: "carto", type: "raster" as const, source: "carto" }],
+    };
+  };
+  const isDark = () =>
+    (document.documentElement.dataset.theme ??
+      (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")) === "dark";
+
+  class Controle implements maplibregl.IControl {
+    private readonly el = document.createElement("div");
+    constructor(private readonly aoMudar: (camada: string) => void) {}
+    onAdd(): HTMLElement {
+      this.el.className = "maplibregl-ctrl maplibregl-ctrl-group painel";
+      this.el.innerHTML = `<p class="painel-titulo">Camada</p>`;
+      Object.entries(CAMADAS).forEach(([id, { rotulo, cor }], i) => {
+        const label = document.createElement("label");
+        const input = document.createElement("input");
+        input.type = "radio";
+        input.name = "camada";
+        input.value = id;
+        input.checked = i === 0;
+        input.addEventListener("change", () => this.aoMudar(id));
+        const swatch = `<span class="swatch" style="background:${cor}"></span>`;
+        label.innerHTML = swatch;
+        label.append(input, document.createTextNode(rotulo));
+        this.el.append(label);
+      });
+      return this.el;
+    }
+    onRemove() {
+      this.el.remove();
+    }
+  }
+
+  async function draw(container: HTMLElement) {
+    const url = container.dataset.pmtiles!;
+    const buffer = await fetch(url).then((r) => r.arrayBuffer());
+    protocol.add(new PMTiles(new BufferSource(buffer, url) as any));
+
+    const map = new maplibregl.Map({
+      container,
+      style: basemap(isDark()),
+      center: [-46.63, -23.55],
+      zoom: 9.4,
+      attributionControl: { compact: true },
+    });
+    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
+    map.addControl(new maplibregl.FullscreenControl(), "top-right");
+
+    let atual = "origens";
+    map.addControl(
+      new Controle((camada) => {
+        atual = camada;
+        for (const id of IDS) {
+          if (map.getLayer(id)) {
+            map.setLayoutProperty(id, "visibility", camada === id ? "visible" : "none");
+          }
+        }
+      }),
+      "top-left",
+    );
+
+    new MutationObserver(() => {
+      const wanted = basemap(isDark());
+      if (JSON.stringify(map.getStyle().sources) !== JSON.stringify(wanted.sources)) {
+        map.setStyle(wanted, { diff: false });
+      }
+    }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+
+    let first = true;
+    map.on("style.load", () => {
+      map.addSource("fluxos", { type: "vector", url: `pmtiles://${url}` });
+
+      type Expr = maplibregl.DataDrivenPropertyValueSpecification<number>;
+      const raio = ["interpolate", ["linear"], ["zoom"], 8, 1, 13, 2.6, 16, 5] as Expr;
+      const opacidade = ["interpolate", ["linear"], ["zoom"], 8, 0.35, 14, 0.85] as Expr;
+
+      for (const [id, { cor }] of Object.entries(CAMADAS)) {
+        map.addLayer({
+          id,
+          type: "circle",
+          source: "fluxos",
+          "source-layer": id,
+          layout: { visibility: atual === id ? "visible" : "none" },
+          paint: {
+            "circle-radius": raio,
+            "circle-color": cor,
+            "circle-opacity": opacidade,
+          },
+        });
+      }
+
+      if (!first) return;
+      first = false;
+
+      const popup = new maplibregl.Popup({
+        closeButton: false,
+        offset: 10,
+        className: "mapa-popup",
+        focusAfterOpen: false,
+      });
+      map.on("mousemove", IDS, (event) => {
+        const f = event.features?.[0];
+        if (!f) return;
+        map.getCanvas().style.cursor = "pointer";
+        const texto = f.properties.motive_name
+          ? `${f.properties.motive_name} · ~${f.properties.weight} viagens`
+          : `~${f.properties.weight} viagens partem daqui`;
+        popup.setLngLat(event.lngLat).setText(texto).addTo(map);
+      });
+      map.on("mouseleave", IDS, () => {
+        map.getCanvas().style.cursor = "";
+        popup.remove();
+      });
+    });
+  }
+
+  document.querySelectorAll<HTMLElement>(".mapa").forEach(draw);
+</script>
+
+<style>
+  .mapa {
+    width: 100%;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    margin-block: 1rem 1.5rem;
+    border: 1px solid var(--sl-color-hairline);
+  }
+</style>
+
+<style is:global>
+  .painel {
+    padding: 0.5rem 0.65rem;
+    font-size: 0.8rem;
+    background: var(--sl-color-bg);
+    color: var(--sl-color-text);
+  }
+  .painel-titulo {
+    margin: 0 0 0.3rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--sl-color-gray-3);
+  }
+  .painel label {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .painel .swatch {
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 999px;
+    display: inline-block;
+  }
+  .mapa .maplibregl-ctrl-group,
+  .mapa .maplibregl-popup-content,
+  .mapa .maplibregl-ctrl-attrib.maplibregl-compact,
+  .mapa .maplibregl-ctrl-attrib {
+    background: var(--sl-color-bg);
+    color: var(--sl-color-text);
+  }
+  :root[data-theme="dark"] .mapa .maplibregl-ctrl-group button .maplibregl-ctrl-icon,
+  :root[data-theme="dark"] .mapa .maplibregl-ctrl-attrib-button {
+    filter: invert(1);
+  }
+</style>

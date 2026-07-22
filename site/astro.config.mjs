@@ -26,6 +26,8 @@ export default defineConfig({
       customCss: ["./src/styles/custom.css"],
       sidebar: [
         { label: "Mapa da demanda", link: "/mapa/" },
+        { label: "Mapa de viagens", link: "/viagens/" },
+        { label: "Dados", link: "/dados/" },
         { label: "Metodologia", link: "/metodologia/" },
         { label: "Fontes", link: "/fontes/" },
       ],

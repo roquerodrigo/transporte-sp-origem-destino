@@ -75,6 +75,7 @@ def test_candidate_sampling_never_leaves_the_pool():
     rng = np.random.default_rng(0)
     candidates = disaggregate.Candidates.__new__(disaggregate.Candidates)
     candidates._by = {(1, "1"): [0, 1, 2]}
+    candidates._pool_cache = {}
     candidates._x = np.array([10.0, 11.0, 12.0])
     candidates._y = np.array([20.0, 21.0, 22.0])
     got = candidates.sample(1, {"1"}, 10, rng)

@@ -1,0 +1,72 @@
+---
+title: Dados
+description: A matriz origem-destino compilada no nível de endereço, por motivo, para download em CSV e Parquet.
+---
+
+import Downloads from "@components/Downloads.astro";
+
+A matriz origem-destino desagregada por este projeto, no **nível de endereço** e **por motivo**
+de viagem. Cada linha é um **feixe**: um par origem→destino em que as duas pontas caem em
+endereços reais da RMSP, carregando a quantidade de viagens/dia que aquele par representa.
+
+<Downloads />
+
+Duas bases, mesmas colunas e mesmas ~35,7 milhões de viagens/dia (99,98% do total da pesquisa):
+a de **importação** tem ~100 mil feixes (orçamento fixo, enxuta, é a que o mapa usa); a
+**completa** desce à resolução máxima, ~713 mil feixes (um feixe por ~50 viagens), e vai
+comprimida. Nas duas, o total de viagens de cada célula origem→destino→motivo é preservado
+exatamente. Não é a matriz por zona da pesquisa: é a matriz **compilada aqui**, descida da zona
+para o endereço da mesma forma que os pontos de demanda (veja a
+[metodologia](../metodologia/)).
+
+## O que é um feixe
+
+A pesquisa expande a amostra para a população: são ~35,7 milhões de viagens/dia. Materializar
+uma linha por viagem seria inviável, então cada feixe representa um **bloco de viagens iguais**
+(mesma origem-zona, destino-zona e motivo), com origem e destino sorteados em endereços reais
+das zonas certas. A coluna `trips` guarda quantas viagens/dia o feixe vale — some `trips` de
+todas as linhas e você recupera os 35,7 milhões.
+
+O número de feixes é um **orçamento fixo** (~100 mil): ele é repartido entre as células
+origem→destino→motivo em proporção às viagens de cada uma — toda célula não vazia recebe pelo
+menos um feixe, e o resto é distribuído por tamanho. O total de viagens de cada célula é
+preservado **exatamente**; o que varia é quantos feixes a representam e quanto cada um pesa.
+
+## Colunas
+
+| Coluna | Tipo | Descrição |
+|---|---|---|
+| `origin_zone` | inteiro | Zona OD de origem da viagem (1–527). |
+| `dest_zone` | inteiro | Zona OD de destino. |
+| `motive` | inteiro | Código do motivo do destino (padrão da Pesquisa OD). |
+| `motive_name` | texto | Nome do motivo (Trabalho Comércio, Educação, Saúde…). |
+| `trips` | inteiro | Viagens/dia que o feixe representa (varia por feixe). |
+| `o_lon`, `o_lat` | decimal | Coordenada da origem em WGS84 (graus). Domicílio na zona de origem. |
+| `d_lon`, `d_lat` | decimal | Coordenada do destino em WGS84. Endereço da espécie do motivo na zona de destino. |
+
+A origem cai sempre num **domicílio** da zona de origem. O destino cai numa **escola** (educação),
+**unidade de saúde** (saúde), **domicílio** (viagem de volta pra casa) ou **estabelecimento**
+genérico (trabalho, compras, lazer, refeição, assuntos pessoais) da zona de destino.
+
+## Por motivo
+
+| Motivo | Feixes | Viagens/dia |
+|---|--:|--:|
+| Educação | 24.864 | 12.897.606 |
+| Trabalho Serviços | 34.178 | 10.687.201 |
+| Trabalho Comércio | 10.641 | 3.334.602 |
+| Trabalho Indústria | 7.618 | 2.454.769 |
+| Saúde | 5.845 | 1.581.000 |
+| Assuntos Pessoais | 5.749 | 1.574.930 |
+| Compras | 5.075 | 1.524.798 |
+| Lazer | 4.827 | 1.272.296 |
+| Refeição | 901 | 255.995 |
+| Procurar Emprego | 266 | 70.848 |
+
+## O que assumir e o que não
+
+O emparelhamento **dentro** de uma célula é sintético: a pesquisa não diz qual casa exata liga
+a qual trabalho exato além da amostra, então origem e destino de um feixe são sorteados
+independentemente entre os endereços elegíveis de cada zona. O que é **fiel** é a estrutura
+zona de origem × zona de destino × motivo, e os totais por essa estrutura — idênticos aos da
+pesquisa, agora resolvidos em endereços em vez de centroides de zona.
