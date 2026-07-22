@@ -16,6 +16,8 @@ from __future__ import annotations
 import logging
 from collections import defaultdict
 
+import numpy as np
+
 from transporte_sp_od.config import MOTIVE
 from transporte_sp_od.sources import survey
 
@@ -62,3 +64,48 @@ def run() -> dict:
         len(by_motive),
     )
     return summary
+
+
+def _inclusion_probabilities(weights: np.ndarray, target: int) -> np.ndarray:
+    """Inclusion probabilities ∝ weight that sum to ``target``, capped at 1.
+
+    Trips heavier than the average share become certainties (probability 1); the remaining
+    budget is shared among the rest, iterated because capping one trip raises the others.
+    """
+    probability = np.minimum(1.0, target * weights / weights.sum())
+    for _ in range(50):
+        certain = probability >= 1.0
+        remaining_budget = target - int(certain.sum())
+        if remaining_budget <= 0:
+            break
+        share = remaining_budget * weights / weights[~certain].sum()
+        updated = np.where(certain, 1.0, np.minimum(1.0, share))
+        if np.array_equal(updated, probability):
+            break
+        probability = updated
+    return probability
+
+
+def subsample(arcs: list[dict], target: int, seed: int = 20230101) -> tuple[list[dict], dict]:
+    """A lighter set of ~``target`` trips that still sums to the same daily total.
+
+    Probability-proportional-to-size: a trip is kept with probability ∝ its weight (heavy
+    trips almost surely survive), and each survivor is reweighted by ``weight / probability``
+    (Horvitz–Thompson), so the expected total is unchanged. The coordinates stay real — a
+    survivor is a real surveyed trip, just standing for more of them.
+    """
+    rng = np.random.default_rng(seed)
+    weights = np.fromiter((arc["weight"] for arc in arcs), dtype=float, count=len(arcs))
+    probability = _inclusion_probabilities(weights, target)
+    kept = np.nonzero(rng.random(len(arcs)) < probability)[0]
+
+    lighter = [{**arcs[i], "weight": round(arcs[i]["weight"] / probability[i])} for i in kept]
+    summary = {"target": target, "arcs": len(lighter), "trips": sum(a["weight"] for a in lighter)}
+    log.info(
+        "subsample: %d -> %d trips (target %d), %d trips/day",
+        len(arcs),
+        len(lighter),
+        target,
+        summary["trips"],
+    )
+    return lighter, summary

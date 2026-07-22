@@ -60,3 +60,36 @@ def test_zones_are_carried_through(monkeypatch):
     arc = flows.run.arcs[0]
     assert arc["origin_zone"] == 17
     assert arc["dest_zone"] == 42
+
+
+def _arc(weight, ox=333725.0, oy=7394554.0, dx=332814.0, dy=7395769.0):
+    return {
+        "origin_zone": 1,
+        "dest_zone": 2,
+        "motive": 3,
+        "motive_name": "Trabalho Serviços",
+        "weight": weight,
+        "ox": ox,
+        "oy": oy,
+        "dx": dx,
+        "dy": dy,
+    }
+
+
+def test_subsample_hits_the_target_and_preserves_the_total():
+    arcs = [_arc(100) for _ in range(2000)]  # total 200000
+    light, summary = flows.subsample(arcs, target=400, seed=1)
+    assert 320 <= summary["arcs"] <= 480  # ~400
+    assert abs(summary["trips"] - 200000) / 200000 < 0.1  # total preserved
+
+
+def test_a_dominant_trip_is_always_kept_with_its_own_weight():
+    arcs = [_arc(1_000_000)] + [_arc(1) for _ in range(200)]
+    light, _ = flows.subsample(arcs, target=10, seed=1)
+    assert 1_000_000 in [a["weight"] for a in light]
+
+
+def test_subsample_keeps_the_real_coordinates():
+    arcs = [_arc(100) for _ in range(500)]
+    light, _ = flows.subsample(arcs, target=100, seed=2)
+    assert light and all(a["ox"] == 333725.0 and a["dy"] == 7395769.0 for a in light)
