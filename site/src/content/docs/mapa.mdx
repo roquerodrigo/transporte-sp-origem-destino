@@ -1,12 +1,13 @@
 ---
 title: Mapa da demanda
-description: Residências, empregos por setor e educação, no nível de endereço, em toda a RMSP.
+description: Residências, empregos e educação como mapa de calor ponderado, em toda a RMSP.
 ---
 
 import Mapa from "@components/Mapa.astro";
 
 <Mapa altura="80vh" />
 
-Cada ponto representa cerca de 50 pessoas ou empregos, posicionado sobre um endereço real do
-CNEFE dentro da sua zona. Troque a camada no canto superior esquerdo. No zoom baixo os pontos
-lêem-se como densidade; aproxime para ver os endereços individuais.
+Um **mapa de calor ponderado** das coordenadas reais da Pesquisa OD: cada domicílio, trabalho
+ou escola informado, ponderado por quantas pessoas ou empregos representa (`FE_PESS`). Troque a
+camada no canto superior esquerdo. Onde há mais gente, o calor é mais intenso — nada é sorteado
+nem agregado por zona, os pontos estão onde a pesquisa registrou.

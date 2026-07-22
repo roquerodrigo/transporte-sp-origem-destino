@@ -8,7 +8,7 @@ import typer
 
 app = typer.Typer(
     add_completion=False,
-    help="Disaggregate the Metrô-SP OD 2023 survey from zone to address level.",
+    help="Map the Metrô-SP OD 2023 survey at its real coordinates: demand and trips.",
 )
 
 
@@ -21,40 +21,25 @@ def _main(verbose: bool = typer.Option(False, "--verbose", "-v", help="debug log
 
 
 @app.command()
-def fetch(source: str = typer.Argument("all", help="all | od | cnefe")) -> None:
-    """Store a dated raw snapshot of the survey and/or the CNEFE archives."""
-    from transporte_sp_od.sources import cnefe, survey
+def fetch() -> None:
+    """Store a dated raw snapshot of the OD survey."""
+    from transporte_sp_od import snapshot
+    from transporte_sp_od.config import settings
 
-    if source in ("all", "od"):
-        typer.echo("→ survey")
-        survey_zip = __import__("transporte_sp_od.snapshot", fromlist=["download"])
-        payload = survey_zip.download(
-            __import__("transporte_sp_od.config", fromlist=["settings"]).settings.od_zip_url
-        )
-        survey_zip.write("od_survey", "od2023.zip", payload,
-                         "metrosp OD2023", "Portal da Transparência Metrô-SP")
-    if source in ("all", "cnefe"):
-        typer.echo("→ cnefe (39 municipalities)")
-        cnefe.fetch()
-    _ = survey
-
-
-@app.command()
-def prepare() -> None:
-    """Read CNEFE, assign each address to its OD zone, write data/dist/enderecos.parquet."""
-    from transporte_sp_od.build import prepare as step
-
-    step.run()
+    typer.echo("→ survey")
+    payload = snapshot.download(settings.od_zip_url)
+    snapshot.write("od_survey", "od2023.zip", payload,
+                   "metrosp OD2023", "Portal da Transparência Metrô-SP")
 
 
 @app.command()
 def build() -> None:
-    """Disaggregate the survey onto the prepared addresses and write data/dist/."""
+    """Materialise the demand point layers from the survey's coordinates and write data/dist/."""
     from transporte_sp_od import export
-    from transporte_sp_od.build import disaggregate
+    from transporte_sp_od.build import demand
 
-    summary = disaggregate.run()
-    export.write_all(disaggregate.run.layers, summary)
+    summary = demand.run()
+    export.write_all(demand.run.layers, summary)
 
 
 @app.command()

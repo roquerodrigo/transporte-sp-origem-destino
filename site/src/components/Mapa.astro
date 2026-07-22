@@ -1,8 +1,8 @@
 ---
 /**
- * The demand map: residences, workplaces (coloured by economic sector) and schools, each an
- * address-level point layer served from a single PMTiles file. At city zoom the points read
- * as a density cloud; zoom into a neighbourhood and they resolve to individual addresses.
+ * The demand map: residents, workplaces and schools as weighted heatmaps, one layer each,
+ * served from a single PMTiles file. Every point is a real surveyed location; its FE_PESS
+ * expansion weight drives the heat, so a dwelling that stands for many people burns brighter.
  *
  * The basemap is CARTO raster (no API key), and both it and MapLibre's own chrome follow the
  * site theme.
@@ -31,9 +31,8 @@ const pmtiles = `${base}dados/demanda.pmtiles`;
    *
    * The site is fronted by Cloudflare, which strips `Accept-Ranges` and compresses
    * `application/octet-stream`, so the byte-range reads PMTiles normally uses come back
-   * corrupt. Fetching the whole 7 MB file once and serving its bytes from an ArrayBuffer
-   * sidesteps that entirely — one plain GET, no ranges — at the cost of a single upfront
-   * download, which for a 7 MB tileset is fine.
+   * corrupt. Fetching the whole file once and serving its bytes from an ArrayBuffer sidesteps
+   * that entirely — one plain GET, no ranges.
    */
   class BufferSource {
     constructor(
@@ -48,22 +47,28 @@ const pmtiles = `${base}dados/demanda.pmtiles`;
     }
   }
 
-  // Grouped sector colours — the 14 survey sectors folded into the categories a reader tracks.
-  const SETOR_COR: [number, string][] = [
-    [4, "#e8590c"], // Comércio
-    [3, "#9b1c31"], // Indústria
-    [2, "#8d6e63"], // Construção
-    [10, "#2e7d32"], // Saúde
-    [11, "#00897b"], // Educação (serviço)
-    [1, "#7cb342"], // Agropecuária
-  ];
-  const SERVICO_COR = "#1e6fd6"; // every other service sector
+  // A per-layer heat ramp: transparent at no density, the layer's hue as it builds up.
+  const rampa = (r: number, g: number, b: number, dr: number, dg: number, db: number) =>
+    [
+      "interpolate",
+      ["linear"],
+      ["heatmap-density"],
+      0,
+      `rgba(${r},${g},${b},0)`,
+      0.3,
+      `rgba(${r},${g},${b},0.4)`,
+      0.6,
+      `rgba(${r},${g},${b},0.7)`,
+      1,
+      `rgba(${dr},${dg},${db},0.9)`,
+    ] as maplibregl.DataDrivenPropertyValueSpecification<string>;
 
   const CAMADAS = {
-    residencia: { rotulo: "Residências", cor: "#5b6bbf" },
-    trabalho: { rotulo: "Trabalho", cor: SERVICO_COR },
-    educacao: { rotulo: "Educação", cor: "#00897b" },
+    residencia: { rotulo: "Residências", cor: "#5b6bbf", rampa: rampa(91, 107, 191, 58, 73, 160) },
+    trabalho: { rotulo: "Trabalho", cor: "#1e6fd6", rampa: rampa(30, 111, 214, 20, 80, 156) },
+    educacao: { rotulo: "Educação", cor: "#00897b", rampa: rampa(0, 137, 123, 0, 95, 85) },
   } as const;
+  const IDS = Object.keys(CAMADAS);
 
   const basemap = (dark: boolean) => {
     const variant = dark ? "dark_all" : "light_all";
@@ -78,7 +83,7 @@ const pmtiles = `${base}dados/demanda.pmtiles`;
           tileSize: 256,
           attribution:
             '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> · ' +
-            '© <a href="https://carto.com/attributions">CARTO</a> · Pesquisa OD 2023 Metrô-SP · IBGE',
+            '© <a href="https://carto.com/attributions">CARTO</a> · Pesquisa OD 2023 Metrô-SP',
         },
       },
       layers: [{ id: "carto", type: "raster" as const, source: "carto" }],
@@ -133,7 +138,7 @@ const pmtiles = `${base}dados/demanda.pmtiles`;
     map.addControl(
       new Controle((camada) => {
         atual = camada;
-        for (const id of Object.keys(CAMADAS)) {
+        for (const id of IDS) {
           if (map.getLayer(id)) {
             map.setLayoutProperty(id, "visibility", camada === id ? "visible" : "none");
           }
@@ -149,77 +154,31 @@ const pmtiles = `${base}dados/demanda.pmtiles`;
       }
     }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
 
-    let first = true;
     map.on("style.load", () => {
       map.addSource("demanda", { type: "vector", url: `pmtiles://${url}` });
 
       type Expr = maplibregl.DataDrivenPropertyValueSpecification<number>;
-      const raio = ["interpolate", ["linear"], ["zoom"], 8, 1, 13, 2.6, 16, 5] as Expr;
-      const opacidade = ["interpolate", ["linear"], ["zoom"], 8, 0.35, 14, 0.85] as Expr;
+      // FE_PESS ranges into the low thousands; cap its pull so a few huge weights don't wash out.
+      const peso = ["interpolate", ["linear"], ["get", "weight"], 0, 0, 1500, 1] as Expr;
+      const intensidade = ["interpolate", ["linear"], ["zoom"], 5, 1, 11, 1.6, 15, 3] as Expr;
+      const raio = ["interpolate", ["linear"], ["zoom"], 5, 2, 9, 9, 13, 20, 15, 28] as Expr;
 
-      map.addLayer({
-        id: "residencia",
-        type: "circle",
-        source: "demanda",
-        "source-layer": "residencia",
-        paint: {
-          "circle-radius": raio,
-          "circle-color": CAMADAS.residencia.cor,
-          "circle-opacity": opacidade,
-        },
-      });
-      map.addLayer({
-        id: "trabalho",
-        type: "circle",
-        source: "demanda",
-        "source-layer": "trabalho",
-        layout: { visibility: "none" },
-        paint: {
-          "circle-radius": raio,
-          "circle-color": ["match", ["get", "sector"], ...SETOR_COR.flat(), SERVICO_COR] as
-            unknown as maplibregl.DataDrivenPropertyValueSpecification<string>,
-          "circle-opacity": opacidade,
-        },
-      });
-      map.addLayer({
-        id: "educacao",
-        type: "circle",
-        source: "demanda",
-        "source-layer": "educacao",
-        layout: { visibility: "none" },
-        paint: {
-          "circle-radius": raio,
-          "circle-color": CAMADAS.educacao.cor,
-          "circle-opacity": opacidade,
-        },
-      });
-
-      for (const id of Object.keys(CAMADAS)) {
-        map.setLayoutProperty(id, "visibility", atual === id ? "visible" : "none");
+      for (const [id, { rampa: cores }] of Object.entries(CAMADAS)) {
+        map.addLayer({
+          id,
+          type: "heatmap",
+          source: "demanda",
+          "source-layer": id,
+          layout: { visibility: atual === id ? "visible" : "none" },
+          paint: {
+            "heatmap-weight": peso,
+            "heatmap-intensity": intensidade,
+            "heatmap-radius": raio,
+            "heatmap-color": cores,
+            "heatmap-opacity": 0.85,
+          },
+        });
       }
-
-      if (!first) return;
-      first = false;
-
-      const popup = new maplibregl.Popup({
-        closeButton: false,
-        offset: 10,
-        className: "mapa-popup",
-        focusAfterOpen: false,
-      });
-      map.on("mousemove", ["residencia", "trabalho", "educacao"], (event) => {
-        const f = event.features?.[0];
-        if (!f) return;
-        map.getCanvas().style.cursor = "pointer";
-        const texto = f.properties.sector_name
-          ? `${f.properties.sector_name} · ~${f.properties.weight} empregos`
-          : `~${f.properties.weight} pessoas`;
-        popup.setLngLat(event.lngLat).setText(texto).addTo(map);
-      });
-      map.on("mouseleave", ["residencia", "trabalho", "educacao"], () => {
-        map.getCanvas().style.cursor = "";
-        popup.remove();
-      });
     });
   }
 

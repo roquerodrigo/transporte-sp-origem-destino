@@ -1,12 +1,12 @@
 ---
 title: Demanda OD-SP
-description: A Pesquisa Origem-Destino 2023 do Metrô-SP desagregada da zona para o endereço.
+description: A Pesquisa Origem-Destino 2023 do Metrô-SP mapeada nas coordenadas reais de cada registro.
 template: splash
 hero:
   tagline: >-
-    A Pesquisa Origem-Destino 2023 do Metrô de São Paulo descida do nível de zona
-    (~527 zonas) para o nível de endereço: onde moram as pessoas, e onde ficam os
-    empregos por setor econômico, em toda a Região Metropolitana.
+    A Pesquisa Origem-Destino 2023 do Metrô de São Paulo mapeada nas coordenadas
+    reais que ela registra: onde moram as pessoas, onde trabalham e estudam, e a
+    origem e o destino de cada viagem, em toda a Região Metropolitana.
   actions:
     - text: Abrir o mapa da demanda
       link: ./mapa/
@@ -32,19 +32,18 @@ import Mapa from "@components/Mapa.astro";
 
 ## O que é isto
 
-A Pesquisa OD divulga a demanda **por zona de tráfego** — quantas pessoas moram, trabalham
-e viajam em cada uma das ~527 zonas da região. Os microdados, porém, guardam a **coordenada
-real** de cada registro: o domicílio, o local de trabalho (com o setor econômico), a escola,
-a origem e o destino de cada viagem — cada um com um peso de expansão.
+Os microdados da Pesquisa OD guardam a **coordenada real** de cada registro: o domicílio, o
+local de trabalho, a escola, e a origem e o destino de cada viagem — cada um com um peso de
+expansão que diz quantas pessoas ou viagens ele representa na população.
 
-Este projeto materializa essa demanda em **pontos de endereço**: espalha a população e os
-empregos de cada zona sobre endereços reais do **CNEFE (IBGE 2022)**, respeitando a espécie
-do endereço — moradores caem em domicílios, empregos em estabelecimentos, educação em
-escolas, saúde em unidades de saúde. A demanda total de cada zona é preservada; o que muda
-é que ela deixa de ser um número na zona e passa a ser uma nuvem de pontos sobre os lotes.
+Este projeto usa **essas coordenadas diretamente**, sem sortear endereços nem agregar por zona.
+A **demanda** (onde as pessoas moram, trabalham e estudam) vira um **mapa de calor ponderado**;
+as **viagens** viram pares origem→destino reais, por motivo, prontos para
+[download](./dados/). Os totais são os da pesquisa: 21,2 M de moradores, 10,5 M de empregos,
+35,7 M de viagens/dia.
 
 ## Como ler o mapa
 
-No zoom da cidade, os pontos formam uma **densidade** — onde há mais moradores, mais escuro.
-Aproxime numa vizinhança e eles resolvem em **endereços individuais**. Troque a camada para
-ver os empregos, coloridos por setor (comércio, indústria, serviços, saúde), ou a educação.
+Onde há mais gente, o calor é mais intenso. Troque a camada no canto superior esquerdo para
+ver residências, trabalho ou educação. Para as viagens — de onde partem e onde terminam, por
+motivo — veja o [mapa de viagens](./viagens/).

@@ -4,9 +4,9 @@ Unlike its zone-aggregated result tables, the microdata carries a real coordinat
 trip end: the dwelling (``CO_DOM``), the workplace (``CO_TR1`` with its economic ``SETOR1``),
 the school, and each trip's origin and destination. Each record also carries an expansion
 weight (``FE_PESS`` for people, ``FE_VIA`` for trips) saying how many real people or trips it
-stands for. Disaggregation turns those weighted points into scattered address-level points.
+stands for — the demand and the flows are built from those real weighted points.
 
-Coordinates are in Córrego Alegre / UTM 23S (metres), the CRS of the zone shapefile too.
+Coordinates are in Córrego Alegre / UTM 23S (metres).
 """
 
 from __future__ import annotations
@@ -16,7 +16,6 @@ import zipfile
 from collections.abc import Iterator
 from pathlib import Path
 
-import shapefile
 from dbfread import DBF
 
 from transporte_sp_od import snapshot
@@ -26,12 +25,9 @@ log = logging.getLogger(__name__)
 SOURCE = "od_survey"
 ARCHIVE = "od2023.zip"
 
-_INNER = "Site_190225/"
-_DBF = _INNER + "Banco2023_divulgacao_190225.dbf"
-_ZONES = _INNER + "002_Site Metro Mapas_190225/Shape/Zonas_2023"
-_ZONE_PARTS = (".shp", ".shx", ".dbf", ".prj")
+_DBF = "Site_190225/Banco2023_divulgacao_190225.dbf"
 
-# The microdata columns the disaggregation actually reads, so the DBF is not carried in full.
+# The microdata columns the build actually reads, so the DBF is not carried in full.
 _FIELDS = (
     "ID_DOM ID_PESS F_PESS FE_PESS FE_VIA "
     "ZONA MUNI_DOM CO_DOM_X CO_DOM_Y "
@@ -42,45 +38,16 @@ _FIELDS = (
 
 
 def _extracted() -> Path:
-    """Extract the DBF and zone shapefile once, next to the raw archive."""
+    """Extract the microdata DBF once, next to the raw archive."""
     out = snapshot.latest_snapshot(SOURCE) / "_extracted"
-    if (out / _DBF).exists():
+    target = out / _DBF
+    if target.exists():
         return out
-    out.mkdir(parents=True, exist_ok=True)
-    wanted = [_DBF, *(_ZONES + part for part in _ZONE_PARTS)]
+    target.parent.mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(snapshot.path(SOURCE, ARCHIVE)) as archive:
-        for name in wanted:
-            target = out / name
-            target.parent.mkdir(parents=True, exist_ok=True)
-            target.write_bytes(archive.read(name))
-    log.info("%s: extracted microdata and zone shapefile", SOURCE)
+        target.write_bytes(archive.read(_DBF))
+    log.info("%s: extracted microdata", SOURCE)
     return out
-
-
-def zones() -> list[dict]:
-    """Each OD zone: number, municipality, district, and its polygon (rings of [x, y])."""
-    reader = shapefile.Reader(str(_extracted() / _ZONES), encoding="latin-1")
-    columns = [f[0] for f in reader.fields[1:]]
-    out = []
-    for record, shape in zip(reader.records(), reader.shapes(), strict=True):
-        row = dict(zip(columns, record, strict=True))
-        out.append(
-            {
-                "zone": int(row["NumeroZona"]),
-                "municipality": int(row["NumeroMuni"]),
-                "municipality_name": row["NomeMunici"],
-                "district": row.get("NomeDistri"),
-                "rings": _rings(shape),
-            }
-        )
-    log.info("%s: %d zones", SOURCE, len(out))
-    return out
-
-
-def _rings(shape) -> list[list[list[float]]]:
-    points = [[float(x), float(y)] for x, y in shape.points]
-    starts = list(shape.parts) + [len(points)]
-    return [points[starts[i] : starts[i + 1]] for i in range(len(shape.parts))]
 
 
 def records() -> Iterator[dict]:
