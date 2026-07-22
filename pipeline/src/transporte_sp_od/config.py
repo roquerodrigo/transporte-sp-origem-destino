@@ -70,11 +70,6 @@ class Settings:
     # 21 M residents into ~420 k mappable points.
     people_per_point: int = env_int("TSPOD_PEOPLE_PER_POINT", 50)
 
-    # Number of address-level OD arcs (feixes) to materialise. Each arc links two real
-    # addresses and carries a share of its OD cell's trips; the total is preserved exactly.
-    # A downstream import expects roughly this many rows.
-    flows_target: int = env_int("TSPOD_FLOWS_TARGET", 100_000)
-
     @property
     def raw_dir(self) -> Path:
         return self.data_dir / "raw"

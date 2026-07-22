@@ -1,88 +1,42 @@
 ---
 const base = import.meta.env.BASE_URL;
-const grupos = [
+const arquivos = [
   {
-    titulo: "Importação — ~100 mil feixes",
-    nota: "Orçamento fixo de feixes, tamanho enxuto. É o que o mapa usa.",
-    arquivos: [
-      {
-        nome: "fluxos.parquet",
-        formato: "Parquet",
-        tamanho: "1,9 MB",
-        descricao: "Colunar comprimido, tipado. Para análise (pandas, DuckDB, Polars).",
-      },
-      {
-        nome: "fluxos.csv",
-        formato: "CSV",
-        tamanho: "6,9 MB",
-        descricao: "Texto separado por vírgula, com cabeçalho. Abre em qualquer planilha.",
-      },
-    ],
+    nome: "fluxos.parquet",
+    formato: "Parquet",
+    tamanho: "1,9 MB",
+    descricao: "Colunar comprimido, tipado. Para análise (pandas, DuckDB, Polars).",
   },
   {
-    titulo: "Base completa — ~713 mil feixes (comprimida)",
-    nota: "A resolução máxima: um feixe por ~50 viagens. Mesmas colunas.",
-    arquivos: [
-      {
-        nome: "fluxos_completo.parquet",
-        formato: "Parquet",
-        tamanho: "7,4 MB",
-        descricao: "Já comprimido internamente (zstd). Abre direto, sem descompactar.",
-      },
-      {
-        nome: "fluxos_completo.csv.gz",
-        formato: "CSV.gz",
-        tamanho: "8,2 MB",
-        descricao: "CSV gzipado (~48 MB descompactado). Use gunzip / descompactador.",
-      },
-    ],
+    nome: "fluxos.csv",
+    formato: "CSV",
+    tamanho: "7,6 MB",
+    descricao: "Texto separado por vírgula, com cabeçalho. Abre em qualquer planilha.",
   },
 ];
 ---
 
-<div class="grupos">
+<div class="downloads">
   {
-    grupos.map((grupo) => (
-      <section class="grupo">
-        <h3 class="grupo-titulo">{grupo.titulo}</h3>
-        <p class="grupo-nota">{grupo.nota}</p>
-        <div class="downloads">
-          {grupo.arquivos.map((arquivo) => (
-            <a class="download" href={`${base}dados/${arquivo.nome}`} download>
-              <span class="formato">{arquivo.formato}</span>
-              <span class="corpo">
-                <span class="nome">{arquivo.nome}</span>
-                <span class="descricao">{arquivo.descricao}</span>
-              </span>
-              <span class="tamanho">{arquivo.tamanho}</span>
-            </a>
-          ))}
-        </div>
-      </section>
+    arquivos.map((arquivo) => (
+      <a class="download" href={`${base}dados/${arquivo.nome}`} download>
+        <span class="formato">{arquivo.formato}</span>
+        <span class="corpo">
+          <span class="nome">{arquivo.nome}</span>
+          <span class="descricao">{arquivo.descricao}</span>
+        </span>
+        <span class="tamanho">{arquivo.tamanho}</span>
+      </a>
     ))
   }
 </div>
 
 <style>
-  .grupos {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-    margin: 1.5rem 0;
-  }
-  .grupo-titulo {
-    margin: 0;
-    font-size: 1rem;
-  }
-  .grupo-nota {
-    margin: 0.2rem 0 0.75rem;
-    font-size: 0.85rem;
-    color: var(--sl-color-gray-3);
-  }
   .downloads {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
+    margin: 1.5rem 0;
   }
   .download {
     display: flex;

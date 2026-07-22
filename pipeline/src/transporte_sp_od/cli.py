@@ -58,24 +58,14 @@ def build() -> None:
 
 
 @app.command()
-def flows(
-    target: int = typer.Option(
-        None, "--target", help="number of address-level arcs to materialise (default 100000)"
-    ),
-) -> None:
-    """Materialise the OD arcs by motive: fluxos.* (~target) + fluxos_completo.* (full, gzipped)."""
+def flows() -> None:
+    """Compile the observed origin→destination trips at their real coordinates to data/dist/."""
     from transporte_sp_od import export
     from transporte_sp_od.build import flows as step
-    from transporte_sp_od.config import settings
 
-    summary = step.run(target=target)
+    summary = step.run()
     export.write_flows(step.run.arcs, summary)
     export.write_flow_points(step.run.arcs)
-
-    # The full base: one arc per ~people_per_point trips, the finest sensible resolution.
-    full_target = round(summary["trips"] / settings.people_per_point)
-    full_summary = step.run(target=full_target)
-    export.write_flows(step.run.arcs, full_summary, stem="fluxos_completo", compress_csv=True)
 
 
 if __name__ == "__main__":

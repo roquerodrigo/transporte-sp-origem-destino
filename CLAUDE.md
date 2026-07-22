@@ -25,7 +25,7 @@ cd pipeline
 uv run transporte-sp-od fetch      # baixa survey + 39 municípios do CNEFE (~460 MB)
 uv run transporte-sp-od prepare    # CNEFE -> endereços indexados por zona (parquet)
 uv run transporte-sp-od build      # desagrega -> data/dist/ (parquet + geojson + resumo)
-uv run transporte-sp-od flows      # fluxos.{csv,parquet} (~100k) + fluxos_completo.{parquet,csv.gz} (~713k) + pontos p/ mapa (geojson)
+uv run transporte-sp-od flows      # viagens reais observadas -> data/dist/fluxos.{csv,parquet} + pontos p/ mapa (geojson)
 uv run ruff check . && uv run pytest
 
 # vector tiles para os mapas (tippecanoe):
@@ -33,15 +33,18 @@ cd ../data/dist && tippecanoe -o demanda.pmtiles -Z5 -z15 --drop-densest-as-need
   --extend-zooms-if-still-dropping --force \
   -L residencia:residencia.geojson -L trabalho:trabalho.geojson -L educacao:educacao.geojson
 tippecanoe -o fluxos.pmtiles -Z5 -z15 --drop-densest-as-needed --extend-zooms-if-still-dropping --force \
-  -L origens:origens.geojson -L dest_trabalho:dest_trabalho.geojson -L dest_educacao:dest_educacao.geojson \
-  -L dest_saude:dest_saude.geojson -L dest_outros:dest_outros.geojson
+  -L origens:origens.geojson -L dest_casa:dest_casa.geojson -L dest_trabalho:dest_trabalho.geojson \
+  -L dest_educacao:dest_educacao.geojson -L dest_saude:dest_saude.geojson -L dest_outros:dest_outros.geojson
 cp demanda.pmtiles fluxos.pmtiles resumo.json ../../site/public/dados/
 ```
 
-O mapa de viagens (`site/src/components/MapaFluxos.astro`, página `/viagens/`) mostra **só as
-pontas das viagens como pontos** — origens (domicílios) e destinos por finalidade — nunca os
-arcos. As camadas de destino saem de `export.write_flow_points` (`DEST_CATEGORY` agrupa os
-motivos em trabalho/educação/saúde/outros).
+**Fluxos = viagens reais, não desagregação.** `build/flows.py` NÃO usa CNEFE nem sorteio: cada
+registro geolocalizado da pesquisa (`CO_O_X/Y` → `CO_D_X/Y`, motivo `MOTIVO_D`, peso `FE_VIA`)
+vira uma linha — o par origem→destino observado, na coordenada real (~112,9k de ~143k; o resto
+não tem coordenada). É diferente dos pontos de demanda (esses, sim, espalham a população no
+CNEFE). O mapa de viagens (`MapaFluxos.astro`, página `/viagens/`) mostra **só as pontas como
+pontos**, nunca os arcos; os destinos saem de `export.write_flow_points` (`DEST_CATEGORY` agrupa
+os motivos em casa/trabalho/educação/saúde/outros).
 
 ## Onde mexer
 
@@ -52,9 +55,10 @@ motivos em trabalho/educação/saúde/outros).
 | Como o CNEFE é lido/reprojetado | `sources/cnefe.py` |
 | Atribuição de zona | `geo.py` (STRtree, CRS da pesquisa) |
 | A desagregação em si | `build/disaggregate.py` |
-| Os feixes origem→destino por motivo | `build/flows.py` (orçamento fixo de arcos por célula OD; destino por espécie via `MOTIVE_DESTINATION`) |
-| Quantos feixes gerar | `config.py` `flows_target` (env `TSPOD_FLOWS_TARGET`, padrão 100000) ou `flows --target` |
-| O mapa | `site/src/components/Mapa.astro` |
+| As viagens observadas O→D | `build/flows.py` (uma linha por registro geolocalizado da pesquisa) |
+| Agrupamento de motivos no mapa de viagens | `export.DEST_CATEGORY` (casa/trabalho/educação/saúde/outros) |
+| O mapa de demanda | `site/src/components/Mapa.astro` |
+| O mapa de viagens | `site/src/components/MapaFluxos.astro` |
 | A página de download dos dados | `site/src/content/docs/dados.mdx` + `components/Downloads.astro` |
 
 ## Armadilhas (custaram tempo)
@@ -75,9 +79,9 @@ motivos em trabalho/educação/saúde/outros).
   bem; usar `astro preview` localmente. GitHub Pages suporta.
 - **Os payloads crus não são commitados** (survey 198 MB, CNEFE 264 MB); os artefatos
   GeoJSON/Parquet também não. Vão no repo, em `site/public/dados/`: o PMTiles (7 MB) do mapa,
-  os `fluxos.{csv,parquet}` (~100k feixes) e a base completa `fluxos_completo.{parquet,csv.gz}`
-  (~713k, comprimida) que a página **Dados** disponibiliza, mais os manifests e o `resumo.json`.
-  O CI não regenera o dado (download pesado demais); só faz lint/test do pipeline e build do site.
+  os `fluxos.{csv,parquet}` (~113k viagens reais) que a página **Dados** disponibiliza, mais os
+  manifests e o `resumo.json`. O CI não regenera o dado (download pesado demais); só faz
+  lint/test do pipeline e build do site.
 
 ## Fora de escopo, de propósito
 

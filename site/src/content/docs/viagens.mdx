@@ -1,19 +1,19 @@
 ---
 title: Mapa de viagens
-description: As pontas das viagens da Pesquisa OD como pontos — onde começam e onde terminam, por motivo.
+description: As pontas das viagens observadas da Pesquisa OD como pontos — onde começam e onde terminam, por motivo.
 ---
 
 import MapaFluxos from "@components/MapaFluxos.astro";
 
-As **pontas das viagens** da matriz origem-destino, como nuvem de pontos de endereço. Troque a
-camada para ver de onde as viagens partem (**Origens**, sempre domicílios) ou onde terminam,
-separado por finalidade: **Trabalho**, **Educação**, **Saúde** e **Outros** (compras, lazer,
-refeição, assuntos pessoais). Só os pontos — as linhas ligando origem a destino não são
-desenhadas.
+As **pontas das viagens observadas** da Pesquisa OD, como nuvem de pontos nas coordenadas reais
+informadas. Troque a camada para ver de onde as viagens partem (**Origens**) ou onde terminam,
+separado por finalidade: **Casa** (volta pra casa), **Trabalho**, **Educação**, **Saúde** e
+**Outros** (compras, lazer, refeição, assuntos pessoais). Só os pontos — as linhas ligando
+origem a destino não são desenhadas.
 
 <MapaFluxos altura="72vh" />
 
-Cada ponto é a ponta de um **feixe** de viagens caído num endereço real da zona certa; passe o
-mouse para ver quantas viagens/dia ele representa. É a mesma matriz da página de
-[Dados](../dados/), vista pelo lado do mapa. No zoom da cidade os pontos formam densidade; ao
-aproximar, resolvem em endereços.
+Cada ponto é a origem ou o destino real de uma viagem pesquisada; passe o mouse para ver
+quantas viagens/dia ela representa. É a mesma base da página de [Dados](../dados/), vista pelo
+lado do mapa. No zoom da cidade os pontos formam densidade; ao aproximar, resolvem em pontos
+individuais.
