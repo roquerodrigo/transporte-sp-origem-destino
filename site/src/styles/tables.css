@@ -1,0 +1,85 @@
+/*
+ * Tables are the substance of this site: 380 of its 386 pages are a station list or a
+ * provenance table. Starlight's defaults are tuned for prose, so three things are fixed
+ * here — and none of the community themes does any of it.
+ */
+
+/*
+ * Starlight's default 45rem is a reading measure for prose, and themes move it in both
+ * directions — the current one narrows it to 40rem. A six-column station table wraps every
+ * cell at that width, so the width is set here, where it does not change with the theme.
+ * This file is unlayered and therefore wins over any theme's layered rules.
+ */
+:root {
+  --sl-content-width: 62rem;
+}
+
+/*
+ * Starlight makes wide tables scroll with `display: block`, which works visually but strips
+ * the table semantics: screen readers lose `role="table"`, the rows and the header
+ * association. The scrolling is moved to a wrapper so the table can go back to being a
+ * table. The `:has()` guard keeps the old behaviour when the wrapper is absent — no
+ * JavaScript, no wrapper, still scrollable.
+ */
+.sl-markdown-content .tabela-rolavel {
+  display: block;
+  overflow-x: auto;
+  max-width: 100%;
+  /* Scrolling regions must be reachable by keyboard; the script sets tabindex to match. */
+  scrollbar-width: thin;
+  scrollbar-color: var(--sl-color-gray-4) transparent;
+}
+
+.sl-markdown-content .tabela-rolavel > table:not(:where(.not-content *)) {
+  display: table;
+  width: 100%;
+  overflow: visible;
+  margin: 0;
+  /* On a phone the auto layout squeezes the columns until a single provenance row is 560px
+     tall. Below this width the table scrolls sideways instead — the wrapper already handles
+     that, with a keyboard-reachable region. Wider tables on a desktop are unaffected. */
+  min-width: 34rem;
+}
+
+.sl-markdown-content table:not(:where(.not-content *)) {
+  font-size: var(--sl-text-sm);
+}
+
+/* A line with 23 stations scrolls well past its own header. */
+.sl-markdown-content .tabela-rolavel thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--sl-color-gray-6);
+  white-space: nowrap;
+}
+
+.sl-markdown-content tbody tr:nth-child(even) {
+  background: color-mix(in oklab, var(--sl-color-gray-6) 45%, transparent);
+}
+
+.sl-markdown-content tbody tr:hover {
+  background: color-mix(in oklab, var(--sl-color-accent-low) 55%, transparent);
+}
+
+.sl-markdown-content :is(th, td) {
+  padding-block: 0.4rem;
+}
+
+/* Starlight leaves the outer edge of the first and last cell flush, so body text and table
+   text share a left edge. That reads well on a plain table and badly on this one: the rows
+   and the header carry a tint, and the text ends up touching the edge of the tinted band. */
+.sl-markdown-content :is(th, td):first-child {
+  padding-inline-start: 0.7rem;
+}
+
+.sl-markdown-content :is(th, td):last-child {
+  padding-inline-end: 0.7rem;
+}
+
+
+@media (max-width: 50rem) {
+  .sl-markdown-content table:not(:where(.not-content *)) {
+    font-size: var(--sl-text-xs);
+  }
+}
