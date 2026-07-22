@@ -1,8 +1,9 @@
-"""Writing the disaggregated demand out.
+"""Writing the demand and flows out.
 
-Two forms of each point layer: a Parquet with the survey-CRS coordinates for analysis, and
-a simplified GeoJSON in WGS84 for the map. The map file is deliberately thinned — hundreds
-of thousands of points — by rounding coordinates and dropping to the fields a dot needs.
+Demand: two forms of each point layer — a Parquet with the survey-CRS coordinates, and a
+GeoJSON in WGS84 for the map's weighted heatmap. Flows: the observed trips as Parquet and CSV,
+plus the trip-endpoint point layers for the flow map. Coordinates are reprojected on the way
+out and rounded, which is enough for the map and keeps the files small.
 """
 
 from __future__ import annotations

@@ -1,13 +1,12 @@
 {
-  "people_per_point": 50,
   "layers": {
-    "residencia": 424740,
-    "trabalho": 207881,
-    "educacao": 102566
+    "residencia": 79331,
+    "trabalho": 39538,
+    "educacao": 15805
   },
   "totals": {
-    "residents": 21236852,
-    "jobs": 10479393,
-    "students": 5133781
+    "residents": 21237468,
+    "jobs": 10479343,
+    "students": 5152105
   }
 }

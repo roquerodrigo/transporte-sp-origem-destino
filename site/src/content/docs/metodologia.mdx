@@ -1,36 +1,43 @@
 ---
 title: Metodologia
-description: Como a demanda de zona vira pontos de endereço, e o que essa simplificação assume.
+description: Tudo vem das coordenadas reais da Pesquisa OD, ponderadas pela expansão. Nada é sorteado.
 ---
 
-## O caminho do dado
+## A ideia central
 
-1. **Pesquisa OD 2023 (Metrô-SP).** Os microdados trazem, por registro, um peso de expansão
-   (`FE_PESS` para pessoas) e a coordenada real do domicílio, do trabalho — com o setor
-   econômico (`SETOR1`, 14 setores) — da escola e de cada viagem. Somados por zona, os pesos
-   são os totais da zona: população por zona de domicílio, empregos por zona de trabalho ×
-   setor, estudantes por zona de escola.
-2. **CNEFE 2022 (IBGE).** Todos os ~9,8 milhões de endereços da RMSP, com coordenada coletada
-   em campo (no lote, não na rua) e uma espécie: domicílio, estabelecimento, escola, saúde.
-   Cada endereço é atribuído à sua zona OD por interseção espacial.
-3. **Desagregação.** Para cada zona, a demanda é dividida pelo fator (≈ 50 pessoas por ponto)
-   e distribuída sobre endereços reais da espécie correta dentro da zona — moradores em
-   domicílios, empregos em estabelecimentos, educação em escolas, saúde em unidades de saúde.
-   O total de cada zona é preservado exatamente.
+A Pesquisa Origem-Destino 2023 do Metrô-SP **geolocaliza cada ponto** de cada registro: o
+domicílio (`CO_DOM`), o local de trabalho (`CO_TR1`, com o setor econômico), a escola (`CO_ESC`)
+e a origem e o destino de cada viagem (`CO_O`, `CO_D`). Cada registro carrega um **peso de
+expansão** — `FE_PESS` para pessoas, `FE_VIA` para viagens — dizendo quantas pessoas ou viagens
+reais ele representa na população.
 
-## O que a simplificação assume, e o que perde
+Este projeto usa **essas coordenadas reais diretamente**. Nada é atribuído a um endereço
+sorteado nem agregado por zona: cada ponto no mapa e cada linha nos dados está onde a pesquisa
+registrou, ponderado pela expansão. Só entram os registros **geolocalizados** (a maior parte;
+uma fração não tem coordenada informada).
 
-A Pesquisa OD **já correlaciona** residência e trabalho por setor no nível do ponto, para a
-amostra: cada trabalhador tem, no mesmo registro, a coordenada da casa, a do trabalho e o
-setor. Por isso **não** precisamos modelar "onde estão as empresas de comércio" a partir de
-cadastros externos — a pesquisa já diz.
+## Demanda
 
-O que fica de fora: o CNEFE separa domicílio de estabelecimento, mas **não** separa comércio
-de indústria de serviços entre os estabelecimentos genéricos. Então um emprego de comércio
-cai num estabelecimento real da zona certa — nunca numa casa ou numa rua — mas não
-garantidamente numa loja. Os totais por zona × setor continuam exatos; só a etiqueta fina do
-estabelecimento é genérica. Educação e saúde, que têm espécie própria no CNEFE, caem no tipo
-certo.
+Cada pessoa pesquisada (peso `FE_PESS`) vira até três pontos: o **domicílio**, o **trabalho** e
+a **escola**, nas coordenadas informadas. O [mapa da demanda](../mapa/) os desenha como um
+**mapa de calor ponderado** — um domicílio que representa muita gente pesa mais no calor. Somados
+os pesos, os totais são a população, os empregos e os estudantes da pesquisa, exatos:
 
-Os pontos são uma **amostra**: cada um representa um bloco de ~50, não um indivíduo. A
-densidade relativa é fiel em todo lugar, e o fator é um parâmetro do pipeline.
+- ~79 mil domicílios pesquisados → **21,2 milhões** de moradores
+- ~40 mil locais de trabalho → **10,5 milhões** de empregos
+- ~16 mil escolas → **5,2 milhões** de estudantes
+
+## Viagens
+
+Cada viagem geolocalizada (peso `FE_VIA`) vira uma linha: a **origem real** (`CO_O`), o
+**destino real** (`CO_D`) e o **motivo do destino** (`MOTIVO_D`). O par origem→destino é o
+**observado**, não uma combinação sintética. São ~112,9 mil viagens, somando os ~35,7 milhões de
+viagens/dia da região. Detalhes e download na página de [Dados](../dados/); as pontas aparecem no
+[mapa de viagens](../viagens/).
+
+## O que isso assume, e o que não
+
+A pesquisa é uma **amostra** expandida: cada ponto real representa um bloco da população via seu
+peso, não um indivíduo. As coordenadas têm a precisão de campo do ponto informado. Como tudo
+parte da coordenada real, **não há sorteio nem suposição de onde as pessoas estão** — a única
+perda é a fração de registros sem coordenada, que fica de fora.

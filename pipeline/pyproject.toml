@@ -7,15 +7,11 @@ requires-python = ">=3.11"
 dependencies = [
     "typer",          # CLI
     "httpx",          # source downloads
-    "pydantic>=2",    # domain model
     "python-dotenv",  # config via .env
     "dbfread",        # OD microdata (.dbf)
-    "pyshp",          # OD zone shapefiles
     "pyproj",         # Córrego Alegre UTM 23S <-> WGS84
-    "shapely>=2",     # point-in-zone via STRtree
-    "numpy",          # weighted sampling
-    "pyarrow",        # parquet for the millions of address points
-    "unidecode",      # name normalisation
+    "numpy",          # batch reprojection
+    "pyarrow",        # parquet output
 ]
 
 [project.scripts]

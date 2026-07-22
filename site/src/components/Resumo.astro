@@ -11,7 +11,7 @@ const tiles = [
     valor: fmt(
       resumo.layers.residencia + resumo.layers.trabalho + resumo.layers.educacao,
     ),
-    rotulo: "pontos mapeados",
+    rotulo: "pontos reais",
   },
 ];
 ---
@@ -27,8 +27,8 @@ const tiles = [
   }
 </div>
 <p class="nota">
-  1 ponto ≈ {resumo.people_per_point} pessoas ou empregos. Os totais da pesquisa são exatos;
-  só a granularidade do ponto é amostrada.
+  Cada ponto é um domicílio, trabalho ou escola real informado na pesquisa, ponderado por
+  quantas pessoas ou empregos representa. Os totais são os da pesquisa.
 </p>
 
 <style>
