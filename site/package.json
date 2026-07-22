@@ -16,6 +16,7 @@
     "maplibre-gl": "^5.24.0",
     "pmtiles": "^4.1.0",
     "sharp": "^0.34.5",
+    "starlight-theme-black": "^0.7.0",
     "typescript": "^6.0.3"
   }
 }

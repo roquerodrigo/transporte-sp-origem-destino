@@ -1,2 +1,196 @@
-:root { --sl-content-width: 60rem; }
-.maplibregl-popup-content { font-size: 0.85rem; padding: 0.35rem 0.6rem; }
+/* Site-wide tweaks that are not about tables — those live in tables.css. */
+
+/* Always reserve the scrollbar gutter. A short page (Fontes) has no vertical scrollbar while
+   the map pages do; without this, the viewport widens on the short page and the centred header
+   jumps a few pixels sideways between pages. */
+html {
+  scrollbar-gutter: stable;
+}
+
+.maplibregl-popup-content {
+  font-size: 0.85rem;
+  padding: 0.35rem 0.6rem;
+}
+
+/* The map is a block of colour in the middle of the prose; a hairline keeps it from
+   floating against the page background in the light theme. */
+.mapa {
+  border: 1px solid var(--sl-color-hairline);
+}
+
+/* Some corridor names run to forty characters and wrap to two lines. The theme gives each
+   sidebar link a fixed height, so a wrapped label overflows onto the next one.
+   The line height is pinned too: the theme leaves the top-level links and the grouped ones
+   on different values, which made otherwise identical single-line items 32px and 36px. */
+#starlight__sidebar a {
+  height: auto;
+  min-height: 2.25rem;
+  line-height: 1.25rem;
+}
+
+/* The theme caps the content column at 640px on `.main-pane`, which `--sl-content-width`
+   cannot reach — the variable only sizes the container inside it. The cap is replaced by
+   the width we want rather than removed: with no cap the pane grows to the viewport and
+   the container inside it ends up flush against the table of contents, which on an
+   ultra-wide screen leaves the text pinned to the right edge. */
+.main-pane {
+  max-width: var(--sl-content-width);
+}
+
+/*
+ * Past the width the layout was designed for, shift the whole shell to the middle instead
+ * of leaving the sidebar welded to the left edge of a 3440px screen.
+ *
+ * The sidebar is `position: fixed`, so it does not follow a centred parent; both it and the
+ * frame are offset by the same declared amount rather than by `margin: auto`, which the
+ * fixed element cannot see. One variable keeps them aligned.
+ */
+@media (min-width: 105rem) {
+  :root {
+    --deslocamento-central: calc((100vw - 105rem) / 2);
+  }
+
+  .main-frame {
+    max-width: 105rem;
+    margin-inline-start: var(--deslocamento-central);
+  }
+
+  .sidebar-pane {
+    left: var(--deslocamento-central);
+  }
+
+  /* The bar itself stays full-bleed — a navigation strip that stops mid-screen reads as a
+     rendering fault — but its contents line up with everything below. */
+  header > .header {
+    max-width: 105rem;
+    margin-inline: auto;
+  }
+}
+
+/* The splash hero centres its own inner block, so the title and the buttons sat 60px to
+   the right of the tiles and the headings below them — two different left edges on the same
+   page. It fills the column instead, like everything else. */
+.hero > .hero-info {
+  width: 100%;
+  max-width: none;
+  /* Below the theme's breakpoint the hero centres itself while the body stays left-aligned,
+     which puts two different left edges on one page. */
+  align-items: flex-start;
+  text-align: start;
+}
+
+/* The map popup is a hover hint: it names what is under the cursor and links to its page,
+   for anyone reaching the map by keyboard or on a touch screen where hover does not exist. */
+.mapa-popup .maplibregl-popup-content a {
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.mapa-popup .maplibregl-popup-content a:hover {
+  text-decoration: underline;
+}
+
+/*
+ * MapLibre's chrome — controls, popup, attribution — ships light-only styling with a
+ * hard-coded white background, while its text inherits the page's colour. Under the dark
+ * theme that is near-white text on white: the filter panel and the tooltip disappear.
+ *
+ * The rules are prefixed with `.mapa` to outrank the library's own single-class selectors
+ * without resorting to `!important`, and they use Starlight's variables so the chrome
+ * follows the theme the same way the basemap already does.
+ */
+.mapa .maplibregl-ctrl-group,
+.mapa .maplibregl-popup-content,
+/* The attribution is styled by two class selectors when compact, which ties on specificity
+   and wins on source order — so it is matched the same way. */
+.mapa .maplibregl-ctrl-attrib.maplibregl-compact,
+.mapa .maplibregl-ctrl-attrib {
+  background: var(--sl-color-bg);
+  color: var(--sl-color-text);
+}
+
+/* Compact mode collapses to a round "i" button whose icon is a dark SVG. */
+:root[data-theme="dark"] .mapa .maplibregl-ctrl-attrib-button {
+  filter: invert(1);
+}
+
+.mapa .maplibregl-ctrl-group {
+  border: 1px solid var(--sl-color-hairline);
+  box-shadow: none;
+}
+
+/* MapLibre sets its own font stack on the map root, so everything it draws — the filter
+   panel, the tooltip, the attribution — came out in a different typeface from the page
+   around it. Only its chrome can follow: the place names belong to the raster basemap and
+   are baked into the tiles. */
+/* The container is also the map root, so MapLibre's own `.maplibregl-map` rule ties with a
+   bare `.mapa` and wins on order. */
+.mapa.maplibregl-map,
+.mapa .maplibregl-ctrl,
+.mapa .maplibregl-popup {
+  font-family: var(--sl-font);
+}
+
+.mapa .maplibregl-ctrl-group button + button {
+  border-top-color: var(--sl-color-hairline);
+}
+
+.mapa .maplibregl-ctrl-attrib a {
+  color: var(--sl-color-text-accent);
+}
+
+/* The popup's arrow is drawn as a border triangle, so it needs the background colour too. */
+.mapa .maplibregl-popup-anchor-top .maplibregl-popup-tip {
+  border-bottom-color: var(--sl-color-bg);
+}
+.mapa .maplibregl-popup-anchor-bottom .maplibregl-popup-tip {
+  border-top-color: var(--sl-color-bg);
+}
+.mapa .maplibregl-popup-anchor-left .maplibregl-popup-tip {
+  border-right-color: var(--sl-color-bg);
+}
+.mapa .maplibregl-popup-anchor-right .maplibregl-popup-tip {
+  border-left-color: var(--sl-color-bg);
+}
+
+/* The control icons are dark SVGs baked into the stylesheet; on a dark surface they have to
+   be flipped, there being no variable to reach into them. */
+:root[data-theme="dark"] .mapa .maplibregl-ctrl-group button .maplibregl-ctrl-icon {
+  filter: invert(1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .mapa .maplibregl-ctrl-group button .maplibregl-ctrl-icon {
+    filter: invert(1);
+  }
+}
+
+/* The map's layer switcher (residences/work/education, or the trip endpoints) — this site's
+   own control, styled to match the themed map chrome above. */
+.painel {
+  padding: 0.5rem 0.65rem;
+  font-size: 0.8rem;
+  background: var(--sl-color-bg);
+  color: var(--sl-color-text);
+}
+.painel-titulo {
+  margin: 0 0 0.3rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--sl-color-gray-3);
+}
+.painel label {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.painel .swatch {
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 999px;
+  display: inline-block;
+}
