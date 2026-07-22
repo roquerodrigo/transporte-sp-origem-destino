@@ -53,7 +53,7 @@ def flows() -> None:
     export.write_flow_points(step.run.arcs)
 
     # Lighter subsamples for smaller downloads; each still sums to the full daily total.
-    for target, stem in ((50_000, "fluxos_50k"), (20_000, "fluxos_20k")):
+    for target, stem in ((50_000, "fluxos_50k"), (20_000, "fluxos_20k"), (10_000, "fluxos_10k")):
         lighter, light_summary = step.subsample(step.run.arcs, target)
         export.write_flows(lighter, light_summary, stem=stem)
 
