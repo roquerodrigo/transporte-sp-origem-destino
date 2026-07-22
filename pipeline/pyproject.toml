@@ -1,0 +1,46 @@
+[project]
+name = "transporte-sp-od"
+version = "0.1.0"
+description = "Disaggregates the Metrô-SP Origin-Destination 2023 survey from zone to address level"
+readme = "../README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "typer",          # CLI
+    "httpx",          # source downloads
+    "pydantic>=2",    # domain model
+    "python-dotenv",  # config via .env
+    "dbfread",        # OD microdata (.dbf)
+    "pyshp",          # OD zone shapefiles
+    "pyproj",         # Córrego Alegre UTM 23S <-> WGS84
+    "shapely>=2",     # point-in-zone via STRtree
+    "numpy",          # weighted sampling
+    "pyarrow",        # parquet for the millions of address points
+    "unidecode",      # name normalisation
+]
+
+[project.scripts]
+transporte-sp-od = "transporte_sp_od.cli:app"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/transporte_sp_od"]
+
+[dependency-groups]
+dev = ["ruff", "pytest", "pytest-cov"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--cov=transporte_sp_od --cov-report=term-missing --cov-fail-under=45"
+
+[tool.coverage.report]
+exclude_also = ["if __name__ == .__main__.:", "if TYPE_CHECKING:"]
+
+[tool.ruff]
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]

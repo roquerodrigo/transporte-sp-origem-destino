@@ -1,0 +1,275 @@
+{
+  "3503901.zip": {
+    "bytes": 849071,
+    "fetched_at": "2026-07-21T23:58:12+00:00",
+    "licence": "IBGE \u2014 dados abertos",
+    "sha256": "6278bf91a3da2d95ff32e17db6885a4b96e498cf5d92a56fe4e1f948539fe623",
+    "url": "https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estatisticos/Censo_Demografico_2022/Arquivos_CNEFE/CSV/Municipio/35_SP/3503901_ARUJA.zip"
+  },
+  "3505708.zip": {
+    "bytes": 2586591,
+    "fetched_at": "2026-07-21T23:58:12+00:00",
+    "licence": "IBGE \u2014 dados abertos",
+    "sha256": "fcd1a8a914ab05ee68ae775d43481929e3f79b36ed32d4e7df1748b3f37c283a",
+    "url": "https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estatisticos/Censo_Demografico_2022/Arquivos_CNEFE/CSV/Municipio/35_SP/3505708_BARUERI.zip"
+  },
+  "3506607.zip": {
+    "bytes": 340650,
+    "fetched_at": "2026-07-21T23:58:12+00:00",
+    "licence": "IBGE \u2014 dados abertos",
+    "sha256": "4f6f6e7c722638912c5d8f69b76ca7fe1f5157df930a4648562519c495309d05",
+    "url": "https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estatisticos/Censo_Demografico_2022/Arquivos_CNEFE/CSV/Municipio/35_SP/3506607_BIRITIBA-MIRIM.zip"
+  },
+  "3509007.zip": {
+    "bytes": 878725,
+    "fetched_at": "2026-07-21T23:58:12+00:00",
+    "licence": "IBGE \u2014 dados abertos",
+    "sha256": "e764540b90139a3b4f8bbe27af832d015dcdea253c62b6c586c21e9390d9d887",
+    "url": "https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estatisticos/Censo_Demografico_2022/Arquivos_CNEFE/CSV/Municipio/35_SP/3509007_CAIEIRAS.zip"
+  },
+  "3509205.zip": {
+    "bytes": 856180,
+    "fetched_at": "2026-07-21T23:58:12+00:00",
+    "licence": "IBGE \u2014 dados abertos",
+    "sha256": "3b07ab2b3dfd3dbce1f7a84102b4d17b30e89c342c922b229a81d156bf4eceaa",
+    "url": "https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estatisticos/Censo_Demografico_2022/Arquivos_CNEFE/CSV/Municipio/35_SP/3509205_CAJAMAR.zip"
+  },
+  "3510609.zip": {
+    "bytes": 3383259,
+    "fetched_at": "2026-07-21T23:58:13+00:00",
+    "licence": "IBGE \u2014 dados abertos",
+    "sha256": "b1d238501df557b18a1b18429d5406063837c6e44aeb2147aefcc265db94455d",
+    "url": "https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estatisticos/Censo_Demografico_2022/Arquivos_CNEFE/CSV/Municipio/35_SP/3510609_CARAPICUIBA.zip"
+  },
+  "3513009.zip": {
+    "bytes": 2922296,
+    "fetched_at": "2026-07-21T23:58:13+00:00",
+    "licence": "IBGE \u2014 dados abertos",
+    "sha256": "f5f82af6068cefe344ed80c5a01e365ad7d75e8fcb307df09ffd7acba33fc7a8",
+    "url": "https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estatisticos/Censo_Demografico_2022/Arquivos_CNEFE/CSV/Municipio/35_SP/3513009_COTIA.zip"
+  },
+  "3513801.zip": {
+    "bytes": 3672300,
+    "fetched_at": "2026-07-21T23:58:13+00:00",
+    "licence": "IBGE \u2014 dados abertos",
+    "sha256": "5e4c2ff6d5cf1e21fe49cbdf8696acd508e4152e7e712012ca1971d2e8b2497c",
+    "url": "https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estatisticos/Censo_Demografico_2022/Arquivos_CNEFE/CSV/Municipio/35_SP/3513801_DIADEMA.zip"
+  },
+  "3515004.zip": {
+    "bytes": 2378556,
+    "fetched_at": "2026-07-21T23:58:13+00:00",
+    "licence": "IBGE \u2014 dados abertos",
+    "sha256": "9a82370268b3aa4d98e508e96cb25e399cf8a16362b2bb724016e220bcadac04",
+    "url": "https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estatisticos/Censo_Demografico_2022/Arquivos_CNEFE/CSV/Municipio/35_SP/3515004_EMBU.zip"
+  },
+  "3515103.zip": {
+    "bytes": 735791,
+    "fetched_at": "2026-07-21T23:58:13+00:00",
+    "licence": "IBGE \u2014 dados abertos",
+    "sha256": "075dcb8501b84e1802f886bfcaf7fe560c09cd079ad95e18be21766d312ba7ed",
+    "url": "https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estatisticos/Censo_Demografico_2022/Arquivos_CNEFE/CSV/Municipio/35_SP/3515103_EMBU-GUACU.zip"
+  },
+  "3515707.zip": {
+    "bytes": 1597132,
+    "fetched_at": "2026-07-21T23:58:13+00:00",
+    "licence": "IBGE \u2014 dados abertos",
+    "sha256": "c438f8321c570fe663217e4ec1d5fcb8fae5fb925cdc027f90d5a92bd040553e",
+    "url": "https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estatisticos/Censo_Demografico_2022/Arquivos_CNEFE/CSV/Municipio/35_SP/3515707_FERRAZ_DE_VASCONCELOS.zip"
+  },
+  "3516309.zip": {
+    "bytes": 1477059,
+    "fetched_at": "2026-07-21T23:58:13+00:00",
+    "licence": "IBGE \u2014 dados abertos",
+    "sha256": "624e244456d88b481b074665b55efe71ab946c4c2c2765e47f8eb163274addba",
+    "url": "https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estatisticos/Censo_Demografico_2022/Arquivos_CNEFE/CSV/Municipio/35_SP/3516309_FRANCISCO_MORATO.zip"
+  },
+  "3516408.zip": {
+    "bytes": 1297900,
+    "fetched_at": "2026-07-21T23:58:13+00:00",
+    "licence": "IBGE \u2014 dados abertos",
+    "sha256": "c3dc8b1a379372f8c7b6349a46a02112d2b0384fdd73df6ec2bf7947a52b4c74",
+    "url": "https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estatisticos/Censo_Demografico_2022/Arquivos_CNEFE/CSV/Municipio/35_SP/3516408_FRANCO_DA_ROCHA.zip"
+  },
+  "3518305.zip": {
+    "bytes": 376174,
+    "fetched_at": "2026-07-21T23:58:14+00:00",
+    "licence": "IBGE \u2014 dados abertos",
+    "sha256": "7beb7babf272625bd9b1d7782a5be03c906850714effa2bd470d69becf976616",
+    "url": "https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estatisticos/Censo_Demografico_2022/Arquivos_CNEFE/CSV/Municipio/35_SP/3518305_GUARAREMA.zip"
+  },
+  "3518800.zip": {
+    "bytes": 13955028,
+    "fetched_at": "2026-07-21T23:58:14+00:00",
+    "licence": "IBGE \u2014 dados abertos",
+    "sha256": "ba4ed1ae9711b047d7184509dccabadeb13d7742afca19409b1fb7b473adfeec",
+    "url": "https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estatisticos/Censo_Demografico_2022/Arquivos_CNEFE/CSV/Municipio/35_SP/3518800_GUARULHOS.zip"
+  },
+  "3522208.zip": {
+    "bytes": 1582845,
+    "fetched_at": "2026-07-21T23:58:14+00:00",
+    "licence": "IBGE \u2014 dados abertos",
+    "sha256": "e04ed070c3abb5e389b1cded441ac7643585dd0561edbf72ec55031524aed362",
+    "url": "https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estatisticos/Censo_Demografico_2022/Arquivos_CNEFE/CSV/Municipio/35_SP/3522208_ITAPECERICA_DA_SERRA.zip"
+  },
+  "3522505.zip": {
+    "bytes": 2069755,
+    "fetched_at": "2026-07-21T23:58:14+00:00",
+    "licence": "IBGE \u2014 dados abertos",
+    "sha256": "f40c615cf984ace934d23db786efd2656022c278f6a071409a6ef6dee6f7a114",
+    "url": "https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estatisticos/Censo_Demografico_2022/Arquivos_CNEFE/CSV/Municipio/35_SP/3522505_ITAPEVI.zip"
+  },
+  "3523107.zip": {
+    "bytes": 3419391,
+    "fetched_at": "2026-07-21T23:58:14+00:00",
+    "licence": "IBGE \u2014 dados abertos",
+    "sha256": "260279dbea0e29503cae767a1882fa35eb15516d58058e8b2bd435122137a6e4",
+    "url": "https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estatisticos/Censo_Demografico_2022/Arquivos_CNEFE/CSV/Municipio/35_SP/3523107_ITAQUAQUECETUBA.zip"
+  },
+  "3525003.zip": {
+    "bytes": 1069564,
+    "fetched_at": "2026-07-21T23:58:15+00:00",
+    "licence": "IBGE \u2014 dados abertos",
+    "sha256": "b60214939a23c3117cceeb636f24b13676a0f0988189109a3a0e7925017bcdb6",
+    "url": "https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estatisticos/Censo_Demografico_2022/Arquivos_CNEFE/CSV/Municipio/35_SP/3525003_JANDIRA.zip"
+  },
+  "3526209.zip": {
+    "bytes": 403764,
+    "fetched_at": "2026-07-21T23:58:15+00:00",
+    "licence": "IBGE \u2014 dados abertos",
+    "sha256": "33c9735c375a4375995714a9d9b651a01d8c91a259a91b4c5405c9976d2649cf",
+    "url": "https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estatisticos/Censo_Demografico_2022/Arquivos_CNEFE/CSV/Municipio/35_SP/3526209_JUQUITIBA.zip"
+  },
+  "3528502.zip": {
+    "bytes": 1169783,
+    "fetched_at": "2026-07-21T23:58:15+00:00",
+    "licence": "IBGE \u2014 dados abertos",
+    "sha256": "7033b7fe3fc1eedfaeb7566369ed95e27f03a57011a66f4c6ace974eec7c4282",
+    "url": "https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estatisticos/Censo_Demografico_2022/Arquivos_CNEFE/CSV/Municipio/35_SP/3528502_MAIRIPORA.zip"
+  },
+  "3529401.zip": {
+    "bytes": 4046171,
+    "fetched_at": "2026-07-21T23:58:15+00:00",
+    "licence": "IBGE \u2014 dados abertos",
+    "sha256": "738f0ccc77ee89762feadae010798739ef3e3d97099e657696a3a64fa4f4caa0",
+    "url": "https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estatisticos/Censo_Demografico_2022/Arquivos_CNEFE/CSV/Municipio/35_SP/3529401_MAUA.zip"
+  },
+  "3530607.zip": {
+    "bytes": 4874426,
+    "fetched_at": "2026-07-21T23:58:15+00:00",
+    "licence": "IBGE \u2014 dados abertos",
+    "sha256": "cccb36d4873130149a707970758ef0eca96402a1c265dcb5522fc8e3f1516c19",
+    "url": "https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estatisticos/Censo_Demografico_2022/Arquivos_CNEFE/CSV/Municipio/35_SP/3530607_MOGI_DAS_CRUZES.zip"
+  },
+  "3534401.zip": {
+    "bytes": 6831280,
+    "fetched_at": "2026-07-21T23:58:15+00:00",
+    "licence": "IBGE \u2014 dados abertos",
+    "sha256": "7976ce34f383427a85f2518e60969026805c58bf8ea714610d8c16d0ba081c48",
+    "url": "https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estatisticos/Censo_Demografico_2022/Arquivos_CNEFE/CSV/Municipio/35_SP/3534401_OSASCO.zip"
+  },
+  "3539103.zip": {
+    "bytes": 177284,
+    "fetched_at": "2026-07-21T23:58:15+00:00",
+    "licence": "IBGE \u2014 dados abertos",
+    "sha256": "b5c8dcb0f5fde09130cd306e13e1d1cb67b963b5e0525bbf62a863182c362b24",
+    "url": "https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estatisticos/Censo_Demografico_2022/Arquivos_CNEFE/CSV/Municipio/35_SP/3539103_PIRAPORA_DO_BOM_JESUS.zip"
+  },
+  "3539806.zip": {
+    "bytes": 943188,
+    "fetched_at": "2026-07-21T23:58:16+00:00",
+    "licence": "IBGE \u2014 dados abertos",
+    "sha256": "d6d048b6ac158d90b7101b661689a869a7bfa8807b67df4b69abd0ce3ab8a01b",
+    "url": "https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estatisticos/Censo_Demografico_2022/Arquivos_CNEFE/CSV/Municipio/35_SP/3539806_POA.zip"
+  },
+  "3543303.zip": {
+    "bytes": 1062747,
+    "fetched_at": "2026-07-21T23:58:16+00:00",
+    "licence": "IBGE \u2014 dados abertos",
+    "sha256": "924ad1035477b918a9a675da5981c7d7102d9309271a4e8a02d35888777edaa5",
+    "url": "https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estatisticos/Censo_Demografico_2022/Arquivos_CNEFE/CSV/Municipio/35_SP/3543303_RIBEIRAO_PIRES.zip"
+  },
+  "3544103.zip": {
+    "bytes": 396063,
+    "fetched_at": "2026-07-21T23:58:16+00:00",
+    "licence": "IBGE \u2014 dados abertos",
+    "sha256": "81fae208c8174374c91cdd011dc5269abeaf256f538dd3c5167575f9c12113c7",
+    "url": "https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estatisticos/Censo_Demografico_2022/Arquivos_CNEFE/CSV/Municipio/35_SP/3544103_RIO_GRANDE_DA_SERRA.zip"
+  },
+  "3545001.zip": {
+    "bytes": 202386,
+    "fetched_at": "2026-07-21T23:58:16+00:00",
+    "licence": "IBGE \u2014 dados abertos",
+    "sha256": "d5fc8772d1c927ff581073dba503471b5209afccf610fb4484e8eba68eda286b",
+    "url": "https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estatisticos/Censo_Demografico_2022/Arquivos_CNEFE/CSV/Municipio/35_SP/3545001_SALESOPOLIS.zip"
+  },
+  "3546801.zip": {
+    "bytes": 620216,
+    "fetched_at": "2026-07-21T23:58:16+00:00",
+    "licence": "IBGE \u2014 dados abertos",
+    "sha256": "c1d08066d6de4c9afe6c3bf2bec466c466e04b3b75f46ff0544e9c852448b8d9",
+    "url": "https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estatisticos/Censo_Demografico_2022/Arquivos_CNEFE/CSV/Municipio/35_SP/3546801_SANTA_ISABEL.zip"
+  },
+  "3547304.zip": {
+    "bytes": 1413296,
+    "fetched_at": "2026-07-21T23:58:16+00:00",
+    "licence": "IBGE \u2014 dados abertos",
+    "sha256": "9d6392c90b5bf8712d45c92f0f4e8beaab408ae8fff149129dc8f207e07b1bbc",
+    "url": "https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estatisticos/Censo_Demografico_2022/Arquivos_CNEFE/CSV/Municipio/35_SP/3547304_SANTANA_DE_PARNAIBA.zip"
+  },
+  "3547809.zip": {
+    "bytes": 7964080,
+    "fetched_at": "2026-07-21T23:58:16+00:00",
+    "licence": "IBGE \u2014 dados abertos",
+    "sha256": "088fcb7061f2939049a28c46b4c837f771a53b5579df47a810d4fdf913bf324b",
+    "url": "https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estatisticos/Censo_Demografico_2022/Arquivos_CNEFE/CSV/Municipio/35_SP/3547809_SANTO_ANDRE.zip"
+  },
+  "3548708.zip": {
+    "bytes": 7764743,
+    "fetched_at": "2026-07-21T23:58:17+00:00",
+    "licence": "IBGE \u2014 dados abertos",
+    "sha256": "5b22235125ca2a6a5210695a457fd0945294c8272ffa3748c6aef56221e81c02",
+    "url": "https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estatisticos/Censo_Demografico_2022/Arquivos_CNEFE/CSV/Municipio/35_SP/3548708_SAO_BERNARDO_DO_CAMPO.zip"
+  },
+  "3548807.zip": {
+    "bytes": 1417950,
+    "fetched_at": "2026-07-21T23:58:17+00:00",
+    "licence": "IBGE \u2014 dados abertos",
+    "sha256": "973579247da3c54befa288b6f99abbade9035656099ff718e4df66ad431cda7b",
+    "url": "https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estatisticos/Censo_Demografico_2022/Arquivos_CNEFE/CSV/Municipio/35_SP/3548807_SAO_CAETANO_DO_SUL.zip"
+  },
+  "3549953.zip": {
+    "bytes": 210328,
+    "fetched_at": "2026-07-21T23:58:17+00:00",
+    "licence": "IBGE \u2014 dados abertos",
+    "sha256": "c48dba9d7b693806c718601599bec8ffab8522c5f9b794d612f5dd3d6a887ab5",
+    "url": "https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estatisticos/Censo_Demografico_2022/Arquivos_CNEFE/CSV/Municipio/35_SP/3549953_SAO_LOURENCO_DA_SERRA.zip"
+  },
+  "3550308.zip": {
+    "bytes": 185731999,
+    "fetched_at": "2026-07-21T23:58:20+00:00",
+    "licence": "IBGE \u2014 dados abertos",
+    "sha256": "6071947b633a096e093c7a04399ba6b24f8bcfef41b8d034c462cd70dc6fecc3",
+    "url": "https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estatisticos/Censo_Demografico_2022/Arquivos_CNEFE/CSV/Municipio/35_SP/3550308_SAO_PAULO.zip"
+  },
+  "3552502.zip": {
+    "bytes": 3102453,
+    "fetched_at": "2026-07-21T23:58:21+00:00",
+    "licence": "IBGE \u2014 dados abertos",
+    "sha256": "edcd4649e707e99047ec11c2c9ab3ba523beab80ee4470aa09d419ad45020a56",
+    "url": "https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estatisticos/Censo_Demografico_2022/Arquivos_CNEFE/CSV/Municipio/35_SP/3552502_SUZANO.zip"
+  },
+  "3552809.zip": {
+    "bytes": 2354953,
+    "fetched_at": "2026-07-21T23:58:21+00:00",
+    "licence": "IBGE \u2014 dados abertos",
+    "sha256": "884372baa9be151548e394e575e5b9ad3a91c269f0e76f85fa20ae3175079559",
+    "url": "https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estatisticos/Censo_Demografico_2022/Arquivos_CNEFE/CSV/Municipio/35_SP/3552809_TABOAO_DA_SERRA.zip"
+  },
+  "3556453.zip": {
+    "bytes": 509233,
+    "fetched_at": "2026-07-21T23:58:21+00:00",
+    "licence": "IBGE \u2014 dados abertos",
+    "sha256": "aca085b99e1fd03fec1852412cbf068a5f76bd392b93a067080de806e8209513",
+    "url": "https://ftp.ibge.gov.br/Cadastro_Nacional_de_Enderecos_para_Fins_Estatisticos/Censo_Demografico_2022/Arquivos_CNEFE/CSV/Municipio/35_SP/3556453_VARGEM_GRANDE_PAULISTA.zip"
+  }
+}

@@ -1,0 +1,43 @@
+---
+title: Demanda OD-SP
+description: A Pesquisa Origem-Destino 2023 do Metrô-SP desagregada da zona para o endereço.
+template: splash
+hero:
+  tagline: >-
+    A Pesquisa Origem-Destino 2023 do Metrô de São Paulo descida do nível de zona
+    (~527 zonas) para o nível de endereço: onde moram as pessoas, e onde ficam os
+    empregos por setor econômico, em toda a Região Metropolitana.
+  actions:
+    - text: Abrir o mapa da demanda
+      link: ./mapa/
+      icon: right-arrow
+    - text: Metodologia
+      link: ./metodologia/
+      variant: minimal
+---
+
+import Resumo from "@components/Resumo.astro";
+import Mapa from "@components/Mapa.astro";
+
+<Resumo />
+
+<Mapa altura="60vh" />
+
+## O que é isto
+
+A Pesquisa OD divulga a demanda **por zona de tráfego** — quantas pessoas moram, trabalham
+e viajam em cada uma das ~527 zonas da região. Os microdados, porém, guardam a **coordenada
+real** de cada registro: o domicílio, o local de trabalho (com o setor econômico), a escola,
+a origem e o destino de cada viagem — cada um com um peso de expansão.
+
+Este projeto materializa essa demanda em **pontos de endereço**: espalha a população e os
+empregos de cada zona sobre endereços reais do **CNEFE (IBGE 2022)**, respeitando a espécie
+do endereço — moradores caem em domicílios, empregos em estabelecimentos, educação em
+escolas, saúde em unidades de saúde. A demanda total de cada zona é preservada; o que muda
+é que ela deixa de ser um número na zona e passa a ser uma nuvem de pontos sobre os lotes.
+
+## Como ler o mapa
+
+No zoom da cidade, os pontos formam uma **densidade** — onde há mais moradores, mais escuro.
+Aproxime numa vizinhança e eles resolvem em **endereços individuais**. Troque a camada para
+ver os empregos, coloridos por setor (comércio, indústria, serviços, saúde), ou a educação.

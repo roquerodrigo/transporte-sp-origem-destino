@@ -1,0 +1,66 @@
+---
+/** Headline counts, read from the pipeline's summary. */
+import resumo from "../../public/dados/resumo.json";
+
+const fmt = (n: number) => new Intl.NumberFormat("pt-BR").format(n);
+const tiles = [
+  { valor: fmt(resumo.totals.residents), rotulo: "moradores" },
+  { valor: fmt(resumo.totals.jobs), rotulo: "empregos" },
+  { valor: fmt(resumo.totals.students), rotulo: "estudantes" },
+  {
+    valor: fmt(
+      resumo.layers.residencia + resumo.layers.trabalho + resumo.layers.educacao,
+    ),
+    rotulo: "pontos mapeados",
+  },
+];
+---
+
+<div class="resumo">
+  {
+    tiles.map((t) => (
+      <div class="tile">
+        <strong>{t.valor}</strong>
+        <span>{t.rotulo}</span>
+      </div>
+    ))
+  }
+</div>
+<p class="nota">
+  1 ponto ≈ {resumo.people_per_point} pessoas ou empregos. Os totais da pesquisa são exatos;
+  só a granularidade do ponto é amostrada.
+</p>
+
+<style>
+  .resumo {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+    gap: 1rem;
+    margin-block: 2rem 0.5rem;
+    align-items: stretch;
+  }
+  .tile {
+    background: var(--sl-color-gray-7);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    margin: 0;
+  }
+  .tile strong {
+    font-size: 1.7rem;
+    line-height: 1.1;
+    color: var(--sl-color-white);
+  }
+  .tile span {
+    font-size: 0.85rem;
+    color: var(--sl-color-gray-3);
+  }
+  .nota {
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--sl-color-gray-3);
+  }
+</style>

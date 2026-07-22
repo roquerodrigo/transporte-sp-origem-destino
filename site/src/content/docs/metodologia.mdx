@@ -1,0 +1,36 @@
+---
+title: Metodologia
+description: Como a demanda de zona vira pontos de endereço, e o que essa simplificação assume.
+---
+
+## O caminho do dado
+
+1. **Pesquisa OD 2023 (Metrô-SP).** Os microdados trazem, por registro, um peso de expansão
+   (`FE_PESS` para pessoas) e a coordenada real do domicílio, do trabalho — com o setor
+   econômico (`SETOR1`, 14 setores) — da escola e de cada viagem. Somados por zona, os pesos
+   são os totais da zona: população por zona de domicílio, empregos por zona de trabalho ×
+   setor, estudantes por zona de escola.
+2. **CNEFE 2022 (IBGE).** Todos os ~9,8 milhões de endereços da RMSP, com coordenada coletada
+   em campo (no lote, não na rua) e uma espécie: domicílio, estabelecimento, escola, saúde.
+   Cada endereço é atribuído à sua zona OD por interseção espacial.
+3. **Desagregação.** Para cada zona, a demanda é dividida pelo fator (≈ 50 pessoas por ponto)
+   e distribuída sobre endereços reais da espécie correta dentro da zona — moradores em
+   domicílios, empregos em estabelecimentos, educação em escolas, saúde em unidades de saúde.
+   O total de cada zona é preservado exatamente.
+
+## O que a simplificação assume, e o que perde
+
+A Pesquisa OD **já correlaciona** residência e trabalho por setor no nível do ponto, para a
+amostra: cada trabalhador tem, no mesmo registro, a coordenada da casa, a do trabalho e o
+setor. Por isso **não** precisamos modelar "onde estão as empresas de comércio" a partir de
+cadastros externos — a pesquisa já diz.
+
+O que fica de fora: o CNEFE separa domicílio de estabelecimento, mas **não** separa comércio
+de indústria de serviços entre os estabelecimentos genéricos. Então um emprego de comércio
+cai num estabelecimento real da zona certa — nunca numa casa ou numa rua — mas não
+garantidamente numa loja. Os totais por zona × setor continuam exatos; só a etiqueta fina do
+estabelecimento é genérica. Educação e saúde, que têm espécie própria no CNEFE, caem no tipo
+certo.
+
+Os pontos são uma **amostra**: cada um representa um bloco de ~50, não um indivíduo. A
+densidade relativa é fiel em todo lugar, e o fator é um parâmetro do pipeline.

@@ -1,0 +1,22 @@
+# Raw payloads are large (survey 198 MB, CNEFE 264 MB) and re-fetchable; only the manifests
+# are committed, so any snapshot can be re-downloaded and verified.
+data/raw/**
+!data/raw/**/
+!data/raw/**/manifest.json
+data/raw/od_survey/**/_extracted/
+
+# Build artifacts: the GeoJSON and Parquet are hundreds of MB. The map's PMTiles (7 MB) is
+# committed under site/public, and the tiny summary is kept for the site's stat tiles.
+data/dist/*.geojson
+data/dist/*.parquet
+data/dist/enderecos.parquet
+
+node_modules/
+dist/
+.astro/
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+.env
