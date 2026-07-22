@@ -21,7 +21,14 @@ log = logging.getLogger(__name__)
 _to_wgs = Transformer.from_crs(CRS_SURVEY, CRS_WGS84, always_xy=True)
 
 # The map toggles destinations by broad purpose; every other motive falls under "outros".
-DEST_CATEGORY = {1: "trabalho", 2: "trabalho", 3: "trabalho", 4: "educacao", 6: "saude"}
+DEST_CATEGORY = {
+    8: "casa",
+    1: "trabalho",
+    2: "trabalho",
+    3: "trabalho",
+    4: "educacao",
+    6: "saude",
+}
 
 
 def write_all(layers: dict[str, list[dict]], summary: dict) -> None:
@@ -37,16 +44,13 @@ def _write(path, payload) -> None:
     log.info("wrote %s (%.1f KB)", path.name, path.stat().st_size / 1024)
 
 
-def write_flows(
-    arcs: list[dict], summary: dict, stem: str = "fluxos", compress_csv: bool = False
-) -> None:
-    """The disaggregated address-level OD arcs, as Parquet and CSV.
+def write_flows(arcs: list[dict], summary: dict) -> None:
+    """The observed OD trips, as Parquet and CSV.
 
-    Each row is one arc: its origin and destination in WGS84, the OD zones, the motive and
-    the trips it stands for. Parquet (zstd) is the compact analyst form; CSV the universal one.
-    Coordinates come in from the survey CRS, are reprojected once in a single batch, and are
-    rounded to five decimals (~1 m) — well below the sampling noise, and it compresses better.
-    ``compress_csv`` gzips the CSV (the big win for the full base); Parquet is already zstd.
+    Each row is one trip: its real origin and destination in WGS84, the OD zones, the
+    destination motive and the daily trips it stands for. Parquet (zstd) is the compact analyst
+    form; CSV the universal one. Coordinates come in from the survey CRS, are reprojected once
+    in a single batch, and are rounded to five decimals (~1 m).
     """
     settings.dist_dir.mkdir(parents=True, exist_ok=True)
 
@@ -75,16 +79,10 @@ def write_flows(
             "d_lat": d_lat,
         }
     )
-    pq.write_table(table, settings.dist_dir / f"{stem}.parquet", compression="zstd")
-    if compress_csv:
-        _write_csv(settings.dist_dir / f"{stem}.csv.gz", table, gzipped=True)
-    else:
-        _write_csv(settings.dist_dir / f"{stem}.csv", table)
+    pq.write_table(table, settings.dist_dir / "fluxos.parquet", compression="zstd")
+    _write_csv(settings.dist_dir / "fluxos.csv", table)
     log.info(
-        "wrote %s.parquet and %s.csv%s (%d arcs, %d trips/day)",
-        stem,
-        stem,
-        ".gz" if compress_csv else "",
+        "wrote fluxos.parquet and fluxos.csv (%d trips, %d trips/day)",
         len(arcs),
         summary["trips"],
     )
@@ -112,7 +110,13 @@ def write_flow_points(arcs: list[dict]) -> None:
     _write_points("origens", o_lon, o_lat, [{"weight": a["weight"]} for a in arcs])
 
     d_lon, d_lat = to_wgs("dx", "dy")
-    categories: dict[str, list[int]] = {"trabalho": [], "educacao": [], "saude": [], "outros": []}
+    categories: dict[str, list[int]] = {
+        "casa": [],
+        "trabalho": [],
+        "educacao": [],
+        "saude": [],
+        "outros": [],
+    }
     for i, arc in enumerate(arcs):
         categories[DEST_CATEGORY.get(arc["motive"], "outros")].append(i)
     for name, rows in categories.items():
@@ -135,23 +139,14 @@ def _write_points(name: str, lon, lat, properties: list[dict]) -> None:
     )
 
 
-def _write_csv(path, table: pa.Table, gzipped: bool = False) -> None:
+def _write_csv(path, table: pa.Table) -> None:
     import csv
-    import gzip
-    import io
 
     columns = table.column_names
-    buffer = io.StringIO()
-    writer = csv.writer(buffer)
-    writer.writerow(columns)
-    writer.writerows(zip(*(table.column(c).to_pylist() for c in columns), strict=True))
-    payload = buffer.getvalue().encode("utf-8")
-    if gzipped:
-        # mtime=0 keeps the bytes stable across rebuilds, so git does not churn.
-        with gzip.GzipFile(path, "wb", mtime=0) as handle:
-            handle.write(payload)
-    else:
-        path.write_bytes(payload)
+    with open(path, "w", newline="", encoding="utf-8") as handle:
+        writer = csv.writer(handle)
+        writer.writerow(columns)
+        writer.writerows(zip(*(table.column(c).to_pylist() for c in columns), strict=True))
 
 
 def _write_parquet(name: str, points: list[dict]) -> None:
