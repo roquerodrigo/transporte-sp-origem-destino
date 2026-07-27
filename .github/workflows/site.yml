@@ -1,4 +1,4 @@
-name: CI
+name: Site
 
 on:
   push:
@@ -10,22 +10,6 @@ permissions:
   contents: read
 
 jobs:
-  pipeline:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: pipeline
-    steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v5
-        with:
-          enable-cache: true
-      - run: uv sync --dev
-      - name: Lint
-        run: uv run ruff check .
-      - name: Tests
-        run: uv run pytest
-
   site:
     runs-on: ubuntu-latest
     defaults:
