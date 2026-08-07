@@ -23,3 +23,7 @@ __pycache__/
 .pytest_cache/
 .coverage
 .env
+
+# Editor and OS cruft
+.idea/
+.DS_Store
