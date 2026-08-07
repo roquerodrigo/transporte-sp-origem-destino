@@ -70,6 +70,17 @@ class Settings:
 settings = Settings()
 
 
+# Lighter flow files published alongside the full one, as (target trips, filename stem). Each is
+# a weighted subsample that still sums to the same daily total, so a consumer picks a size, not
+# a different dataset.
+FLOW_SUBSAMPLES: tuple[tuple[int, str], ...] = (
+    (50_000, "fluxos_50k"),
+    (20_000, "fluxos_20k"),
+    (10_000, "fluxos_10k"),
+    (1_000, "fluxos_1k"),
+)
+
+
 # Trip motive (MOTIVO / MOTIVO_O / MOTIVO_D in the microdata).
 MOTIVE: dict[int, str] = {
     1: "Trabalho Indústria",

@@ -47,13 +47,14 @@ def flows() -> None:
     """Compile the observed origin→destination trips at their real coordinates to data/dist/."""
     from transporte_sp_od import export
     from transporte_sp_od.build import flows as step
+    from transporte_sp_od.config import FLOW_SUBSAMPLES
 
     summary = step.run()
     export.write_flows(step.run.arcs, summary)
     export.write_flow_points(step.run.arcs)
 
     # Lighter subsamples for smaller downloads; each still sums to the full daily total.
-    for target, stem in ((50_000, "fluxos_50k"), (20_000, "fluxos_20k"), (10_000, "fluxos_10k")):
+    for target, stem in FLOW_SUBSAMPLES:
         lighter, light_summary = step.subsample(step.run.arcs, target)
         export.write_flows(lighter, light_summary, stem=stem)
 
