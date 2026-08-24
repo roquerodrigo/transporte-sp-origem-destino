@@ -2,7 +2,6 @@
 name = "transporte-sp-od"
 version = "0.1.0"
 description = "Disaggregates the Metrô-SP Origin-Destination 2023 survey from zone to address level"
-readme = "../README.md"
 requires-python = ">=3.11"
 dependencies = [
     "typer",          # CLI
