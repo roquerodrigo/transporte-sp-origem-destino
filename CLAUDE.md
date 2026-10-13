@@ -38,23 +38,15 @@ cd ../data/dist && tippecanoe -o demanda.pmtiles -Z5 -z15 -r1 --no-tile-size-lim
 tippecanoe -o fluxos.pmtiles -Z5 -z15 --drop-densest-as-needed --extend-zooms-if-still-dropping --force \
   -L origens:origens.geojson -L dest_casa:dest_casa.geojson -L dest_trabalho:dest_trabalho.geojson \
   -L dest_educacao:dest_educacao.geojson -L dest_saude:dest_saude.geojson -L dest_outros:dest_outros.geojson
-cp demanda.pmtiles fluxos.pmtiles resumo.json ../../site/public/dados/
+cp demanda.pmtiles fluxos.pmtiles resumo.json fluxos*.csv fluxos*.parquet ../../site/public/dados/
 ```
 
 ## Onde mexer
 
-| Quero mudar | Mexo em |
-|---|---|
-| URL do survey, CRS, vocabulário de motivos | `pipeline/src/transporte_sp_od/config.py` — **fonte única** |
-| Como a pesquisa é lida (campos, `people()`) | `sources/survey.py` |
-| A demanda (casa/trabalho/escola por coord real) | `build/demand.py` |
-| As viagens observadas O→D | `build/flows.py` (uma linha por registro geolocalizado) |
-| Quais versões leves são publicadas | `config.FLOW_SUBSAMPLES` (alvo + nome do arquivo) |
-| Como a versão leve é amostrada | `flows.subsample` (PPS ∝ peso + Horvitz-Thompson; preserva o total) |
-| Agrupamento de motivos no mapa de viagens | `export.DEST_CATEGORY` (casa/trabalho/educação/saúde/outros) |
-| O mapa de demanda (heatmap) | `site/src/components/Mapa.astro` |
-| O mapa de viagens (pontos) | `site/src/components/MapaFluxos.astro` |
-| A página de download dos dados | `site/src/content/docs/dados.mdx` + `components/Downloads.astro` |
+- `pipeline/src/transporte_sp_od/config.py` é a **fonte única** (URL do survey, CRS, vocabulário
+  de motivos, `FLOW_SUBSAMPLES` = quais versões leves são publicadas); cada campo de `Settings`
+  aceita override por env `TSPOD_*` ou `.env` na raiz do repo.
+- As versões leves (`flows.subsample`) são PPS ∝ peso + Horvitz-Thompson: preservam o total.
 
 ## Armadilhas (custaram tempo)
 
@@ -71,5 +63,6 @@ cp demanda.pmtiles fluxos.pmtiles resumo.json ../../site/public/dados/
   fora. Os totais somam ao esperado porque o peso expande o que sobra.
 - **Payloads crus e artefatos não commitados** (survey ~198 MB; geojson/parquet intermediários).
   Vão no repo, em `site/public/dados/`: os PMTiles dos dois mapas, os `fluxos.{csv,parquet}`
-  (~113k viagens) que a página **Dados** disponibiliza, os manifests e o `resumo.json`. O CI só
-  faz lint/test do pipeline e build do site — não regenera o dado.
+  (~113k viagens) e as versões leves `fluxos_*.{csv,parquet}` que a página **Dados**
+  disponibiliza (lista em `Downloads.astro`) e o `resumo.json`; os manifests ficam em
+  `data/raw/`. O CI só faz lint/test do pipeline e build do site — não regenera o dado.
